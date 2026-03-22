@@ -44,10 +44,10 @@ Not an AI writing assistant. Not grammar checking. A diverse synthetic audience 
                                                                    [4b. Rewrite Pass]
 ```
 
-### Stage 1 — Input (Python)
+### Stage 1 — Input (Python, lives in `pipeline.py`)
 
 - Accept text via: pasted string, file path, or stdin
-- Validate: non-empty, within size bounds (50-5000 words)
+- Validate: non-empty, within size bounds (50-2500 words — covers short + medium-form with buffer)
 - Extract metadata: word count, estimated read time, detect structure (headings, lists, links)
 
 ### Stage 2 — Content Analysis (Python)
@@ -58,8 +58,9 @@ Not an AI writing assistant. Not grammar checking. A diverse synthetic audience 
 ### Stage 3 — Persona Selection (Claude, single call)
 
 - Always include the fixed core set (4 personas)
-- Claude picks 1-3 additional personas from the dynamic catalog based on content type and structure
-- Returns the final persona roster for this run
+- Claude receives the full text + Stage 2 metadata and infers content characteristics (metaphor-heavy, claim-heavy, jargon-dense, etc.) — no separate classification step needed
+- Picks 1-3 additional personas from the dynamic catalog based on its assessment
+- Returns JSON: `{"dynamic_personas": ["literal-reader", "skeptic"]}` — list of persona filenames (without extension) to load from `personas/dynamic/`
 
 ### Stage 4 — Reading Simulation (Claude, parallel calls)
 
@@ -114,6 +115,8 @@ output_schema:
   lost_interest_at: string | null
   time_spent: string
 ```
+
+**Note on `output_schema`:** This field in persona YAML is guidance/documentation only. All personas return the universal findings JSON schema defined in the Data Flow section. The `output_schema` field helps persona authors think about what their persona should produce, but the runtime schema is standardized.
 
 ### Core Personas (always run)
 
@@ -180,10 +183,13 @@ Return your findings as JSON matching the schema below.
 
 ### Deduplication (Python)
 
-When multiple personas flag the same passage (fuzzy match on location + passage text):
-- Merge into a single finding with multiple persona attributions
+When multiple personas flag the same passage, merge them. Matching strategy: two findings are considered duplicates if they reference the same paragraph **and** passage text overlap exceeds 60% (via `difflib.SequenceMatcher`).
+
+When merged: Merge into a single finding with multiple persona attributions
 - Severity = highest among the flagging personas
 - Signal strength indicator: "flagged by 3/5 personas"
+
+**Note on `location` field:** The `location` in persona output (`"paragraph 2, sentence 1"`) is human-readable prose, not a structured coordinate. Dedup relies on passage text overlap, not location matching. This is a known limitation — location is for display, not programmatic use.
 
 Passages flagged by multiple personas are the biggest blind spots.
 
@@ -205,6 +211,8 @@ output/
     rewrites.md         # L3 — rewrite suggestions (if enabled)
 ```
 
+The `slug` is derived from the input filename (without extension), or first 5 words of the content (lowercased, hyphenated) if pasted. Re-running on the same input creates a new timestamped directory — no overwriting.
+
 ### L1 — summary.md (also printed to terminal)
 
 ```markdown
@@ -216,15 +224,15 @@ output/
 
 ## Top Findings
 
-1. **[red] Opening hook doesn't land** (flagged by 3/6 personas)
+1. **🔴 Opening hook doesn't land** (flagged by 3/6 personas)
    > "In my experience building products across three companies..."
    Scanner bounced here. Busy Reader skipped ahead. Skimmer saw no value signal.
 
-2. **[yellow] Claim unsupported in paragraph 4** (flagged by 2/6 personas)
+2. **🟡 Claim unsupported in paragraph 4** (flagged by 2/6 personas)
    > "Roadmaps fail 80% of the time"
    Challenger wants a source. Skeptic assumes you made it up.
 
-3. **[yellow] Jargon barrier in section 2** (flagged by 1/6 personas)
+3. **🟡 Jargon barrier in section 2** (flagged by 1/6 personas)
    > "outcome-driven delivery cadence"
    Domain Outsider lost the thread here.
 
@@ -326,6 +334,38 @@ first-misread analyze post.md
 first-misread analyze post.md --no-rewrites
 first-misread analyze --text "paste content here"
 ```
+
+---
+
+## Configuration
+
+**API key:** `ANTHROPIC_API_KEY` environment variable. Required. The Claude Code skill environment typically has this set already. For standalone CLI extraction, the user must export it.
+
+**Model:** Default to `claude-sonnet-4-6` for persona simulation calls (good balance of speed and quality for parallel calls). Rewrite pass and persona selection use the same model. Configurable via `FIRST_MISREAD_MODEL` env var if needed.
+
+**Persona directories:** `personas/core/`, `personas/dynamic/`, `personas/custom/` relative to the project root.
+
+---
+
+## Error Handling
+
+**Principle:** Failed persona calls are logged and skipped, not hard failures. The run continues with available results.
+
+- **Malformed persona YAML:** Skip the persona, log a warning with the filename and parse error.
+- **Claude API rate limit or timeout:** Retry once with backoff. If still failing, skip the persona and note it in the L1 summary ("1 persona failed, results from 5/6").
+- **Malformed persona JSON response:** If Claude returns invalid JSON or missing required fields, skip that persona's findings with a warning.
+- **Partial `asyncio.gather` failure:** Use `return_exceptions=True`. Process successful results, log failures.
+- **Input file not found:** Hard error, fail immediately with clear message.
+- **Input too short/long:** Hard error, fail with word count and valid range.
+
+---
+
+## Testing Strategy
+
+- **Unit tests** for Python stages: `analyzer.py` (structural analysis), `aggregator.py` (dedup logic), `output.py` (markdown generation). These are deterministic and fully testable.
+- **Integration tests** use fixture YAML personas and pre-recorded Claude API responses (saved as JSON fixtures) to test the full pipeline without live API calls.
+- **Persona YAML validation:** A test that loads all YAML files in `personas/` and validates them against the expected schema.
+- **Live smoke test:** A single end-to-end run with a known input text, checking that output files are generated with expected structure. Requires API key, runs manually.
 
 ---
 
