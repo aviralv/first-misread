@@ -183,7 +183,7 @@ Return your findings as JSON matching the schema below.
 
 ### Deduplication (Python)
 
-When multiple personas flag the same passage, merge them. Matching strategy: two findings are considered duplicates if they reference the same paragraph **and** passage text overlap exceeds 60% (via `difflib.SequenceMatcher`).
+When multiple personas flag the same passage, merge them. Matching strategy: two findings are considered duplicates if passage text overlap exceeds 60% (via `difflib.SequenceMatcher`). Location field is not used for matching — it's human-readable display text only.
 
 When merged: Merge into a single finding with multiple persona attributions
 - Severity = highest among the flagging personas
@@ -341,7 +341,7 @@ first-misread analyze --text "paste content here"
 
 **API key:** `ANTHROPIC_API_KEY` environment variable. Required. The Claude Code skill environment typically has this set already. For standalone CLI extraction, the user must export it.
 
-**Model:** Default to `claude-sonnet-4-6` for persona simulation calls (good balance of speed and quality for parallel calls). Rewrite pass and persona selection use the same model. Configurable via `FIRST_MISREAD_MODEL` env var if needed.
+**Model:** Default to `claude-sonnet-4-6` (Sonnet 4.6) for persona simulation calls (good balance of speed and quality for parallel calls). Rewrite pass and persona selection use the same model. Configurable via `FIRST_MISREAD_MODEL` env var if needed. Update the default as newer models ship.
 
 **Persona directories:** `personas/core/`, `personas/dynamic/`, `personas/custom/` relative to the project root.
 
@@ -363,7 +363,7 @@ first-misread analyze --text "paste content here"
 ## Testing Strategy
 
 - **Unit tests** for Python stages: `analyzer.py` (structural analysis), `aggregator.py` (dedup logic), `output.py` (markdown generation). These are deterministic and fully testable.
-- **Integration tests** use fixture YAML personas and pre-recorded Claude API responses (saved as JSON fixtures) to test the full pipeline without live API calls.
+- **Integration tests** use fixture YAML personas and pre-recorded Claude API responses (saved as JSON in `tests/fixtures/`). Generate fixtures by running the pipeline with `FIRST_MISREAD_RECORD=1` to capture raw API responses.
 - **Persona YAML validation:** A test that loads all YAML files in `personas/` and validates them against the expected schema.
 - **Live smoke test:** A single end-to-end run with a known input text, checking that output files are generated with expected structure. Requires API key, runs manually.
 
