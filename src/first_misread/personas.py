@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 def load_persona(path: Path) -> PersonaConfig:
     """Load a single persona from a YAML file."""
     raw = yaml.safe_load(path.read_text())
+    if raw is None:
+        raise ValueError(f"Empty YAML file: {path}")
     return PersonaConfig(**raw)
 
 

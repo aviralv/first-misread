@@ -19,4 +19,7 @@ def test_all_dynamic_personas_load():
     assert len(dynamic) == 5
     names = {p.name for p in dynamic}
     assert "The Literal Reader" in names
+    assert "The Visualizer" in names
+    assert "The Domain Outsider" in names
     assert "The Skeptic" in names
+    assert "The Emotional Reader" in names
