@@ -14,6 +14,20 @@ logger = logging.getLogger(__name__)
 DEFAULT_MODEL = "claude-sonnet-4-6"
 
 
+def _strip_code_fences(text: str) -> str:
+    """Strip markdown code fences from JSON responses."""
+    text = text.strip()
+    if text.startswith("```"):
+        lines = text.splitlines()
+        # Remove opening fence (```json or ```)
+        lines = lines[1:]
+        # Remove closing fence
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+        text = "\n".join(lines).strip()
+    return text
+
+
 class ClaudeClient:
     """Async Claude API client with retry and JSON parsing."""
 
@@ -24,7 +38,8 @@ class ClaudeClient:
         max_retries: int = 1,
     ):
         self.client = client or AsyncAnthropic(
-            api_key=os.environ.get("ANTHROPIC_API_KEY")
+            api_key=os.environ.get("ANTHROPIC_API_KEY"),
+            base_url=os.environ.get("ANTHROPIC_BASE_URL") or None,
         )
         self.model = model or os.environ.get("FIRST_MISREAD_MODEL", DEFAULT_MODEL)
         self.max_retries = max_retries
@@ -45,6 +60,7 @@ class ClaudeClient:
                     messages=[{"role": "user", "content": user}],
                 )
                 text = response.content[0].text
+                text = _strip_code_fences(text)
                 return json.loads(text)
             except json.JSONDecodeError as e:
                 logger.warning(f"Invalid JSON from Claude: {e}")
