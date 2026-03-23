@@ -19,6 +19,9 @@ dev = [
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 
+[project.scripts]
+first-misread = "first_misread.cli:main"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
