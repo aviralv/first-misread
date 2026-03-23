@@ -36,7 +36,8 @@ async def test_select_returns_subset_of_dynamic(sample_metadata, dynamic_persona
         metadata=sample_metadata,
         available_dynamic=dynamic_personas,
     )
-    assert len(result) >= 0  # may be empty if names don't match
+    assert len(result) == 1
+    assert result[0].name == "The Skeptic"
     assert all(isinstance(p, PersonaConfig) for p in result)
 
 
