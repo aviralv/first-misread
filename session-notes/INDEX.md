@@ -7,6 +7,16 @@
 
 ## Active Sessions
 
+### 2026-03-24 - First Live Runs
+- **Status**: Complete
+- **Focus**: Fixed code fence bug, wired API proxy, ran 3 real end-to-end tests
+- **Key Outcomes**: All 3 tests produced useful feedback; Challenger + Emotional Reader standout personas
+- **Next Steps**: Try longer content, custom persona, title slug fix
+
+---
+
+## Completed Sessions
+
 ### 2026-03-23 - V1 Implementation
 - **Status**: Complete
 - **Focus**: Fixed 8 plan review issues, executed 13-task implementation plan (subagent-driven)
