@@ -57,9 +57,9 @@ async def run_pipeline(
     text = validate_input(text)
     slug = make_slug(file_path=file_path, text=text)
     title = (
-        file_path.stem.replace("-", " ").title()
+        file_path.stem.replace("-", " ").replace("_", " ").capitalize()
         if file_path
-        else slug.replace("-", " ").title()
+        else slug.replace("-", " ").capitalize()
     )
 
     # Stage 2: Content Analysis
