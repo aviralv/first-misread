@@ -29,10 +29,10 @@ A Chrome extension that brings First Misread's behavioral reading simulation dir
 - Settings management (provider, key, model, preferences)
 - All 9 bundled personas (4 core + 5 dynamic)
 
-**Out of scope (v1):**
-- Custom persona creation (Pro tier — future)
-- Results history / saved analyses (Pro tier — future)
-- Backend / hosted tier (Step 2 architecture)
+**Out of scope (v1 stage 1):**
+- Custom persona creation (v1 stage 2 — Pro tier)
+- Results history / saved analyses (v1 stage 2 — Pro tier)
+- Backend / hosted tier (v2)
 - Rewrite suggestions (defer to keep v1 focused on the core feedback loop)
 - Chrome Web Store publishing (manual install via developer mode for initial testing)
 
@@ -147,6 +147,7 @@ A Chrome extension that brings First Misread's behavioral reading simulation dir
 **Step 3 — Paste your API key**
 - Text field for API key
 - If "Other" selected: additional fields for Base URL and Model name
+- For Anthropic/OpenAI/Google: optional "Advanced" toggle reveals a custom Base URL field (for proxy servers like LiteLLM, corporate proxies, or caching layers). When set, requests go to the proxy instead of the provider's default endpoint, using the same API format.
 - Privacy message prominently displayed:
   > "Your key stays on your device. We never see it, store it, or transmit it to our servers. It goes directly from your browser to your LLM provider."
 - Key stored in `chrome.storage.local` (encrypted at rest by Chrome)
@@ -226,7 +227,7 @@ The side panel opens a persistent port to the service worker via `chrome.runtime
 {
   "provider": "anthropic" | "openai" | "google" | "openai-compatible",
   "apiKey": "sk-...",
-  "baseUrl": "https://...",        // only for openai-compatible
+  "baseUrl": "https://...",        // custom base URL (required for openai-compatible, optional override for others)
   "model": "claude-sonnet-4-6",   // provider-specific default
   "onboardingComplete": true,
   "preferences": {
@@ -370,11 +371,12 @@ class LLMClient {
 **Factory:**
 ```javascript
 function createClient(provider, config) {
+  // All providers support optional baseUrl override (for proxy servers)
   switch (provider) {
-    case 'anthropic': return new AnthropicClient(config.apiKey, config.model);
-    case 'openai': return new OpenAIClient(config.apiKey, config.model);
+    case 'anthropic': return new AnthropicClient(config.apiKey, config.model, config.baseUrl);
+    case 'openai': return new OpenAIClient(config.apiKey, config.model, config.baseUrl);
     case 'google': return new OpenAICompatibleClient(
-      'https://generativelanguage.googleapis.com/v1beta/openai',
+      config.baseUrl || 'https://generativelanguage.googleapis.com/v1beta/openai',
       config.apiKey, config.model
     );
     case 'openai-compatible': return new OpenAICompatibleClient(

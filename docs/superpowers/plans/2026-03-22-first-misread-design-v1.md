@@ -39,6 +39,9 @@ First Misread Implementation Plan
       "pytest-asyncio>=0.24",
   ]
 
+  [tool.pytest.ini_options]
+  asyncio_mode = "auto"
+
   [build-system]
   requires = ["hatchling"]
   build-backend = "hatchling.build"
@@ -174,7 +177,7 @@ First Misread Implementation Plan
   from enum import Enum
   from typing import Literal
 
-  from pydantic import BaseModel
+  from pydantic import BaseModel, computed_field
 
 
   class PersonaConfig(BaseModel):
@@ -232,6 +235,7 @@ First Misread Implementation Plan
       personas: list[str]
       descriptions: list[dict]
 
+      @computed_field
       @property
       def signal_strength(self) -> str:
           n = len(self.personas)
@@ -406,8 +410,136 @@ First Misread Implementation Plan
     Nothing grabs attention in the first 3 sentences,
     or the piece looks too long for the perceived payoff.
 
-  Write similar files for: skimmer.yaml, busy-reader.yaml, challenger.yaml, literal-reader.yaml, visualizer.yaml, domain-outsider.yaml, skeptic.yaml,
-  emotional-reader.yaml. Use the persona descriptions from the spec tables.
+  # personas/core/skimmer.yaml
+  name: The Skimmer
+  type: core
+  behavior: |
+    Reads headings, bold text, and first sentence of each paragraph only.
+    Jumps between sections looking for the key takeaway.
+    Builds a mental summary from fragments, never reading full paragraphs.
+  focus:
+    - heading informativeness
+    - bold/emphasized text placement
+    - first-sentence clarity per paragraph
+    - whether key ideas survive partial reading
+  stops_when: |
+    Headings are vague or missing, paragraphs blur together,
+    or the piece requires sequential reading to make sense.
+
+  # personas/core/busy-reader.yaml
+  name: The Busy Reader
+  type: core
+  behavior: |
+    Has 2 minutes between meetings. Starts reading with good intentions
+    but drops at the first sign of friction — slow intros, unnecessary
+    preamble, or paragraphs that don't earn their length.
+  focus:
+    - speed to first insight
+    - paragraph economy
+    - buried ledes
+    - unnecessary preamble or throat-clearing
+  stops_when: |
+    The first two paragraphs don't deliver value,
+    or the piece feels like it's warming up instead of delivering.
+
+  # personas/core/challenger.yaml
+  name: The Challenger
+  type: core
+  behavior: |
+    Reads the full piece looking for holes in the argument.
+    Tests every claim against "says who?" and "based on what?"
+    Wants evidence, examples, or at least acknowledged uncertainty.
+  focus:
+    - claim strength and support
+    - logical consistency
+    - missing evidence or sources
+    - overgeneralization
+  stops_when: |
+    Never stops early — reads everything. But mentally
+    checks out if too many unsupported claims stack up.
+
+  # personas/dynamic/literal-reader.yaml
+  name: The Literal Reader
+  type: dynamic
+  behavior: |
+    Takes everything at face value. Misses irony, sarcasm,
+    and figurative language. Reads metaphors as literal statements
+    and gets confused when the text doesn't mean what it says.
+  focus:
+    - metaphors and figurative language
+    - irony and sarcasm
+    - implicit meaning that requires inference
+    - cultural references that assume shared context
+  stops_when: |
+    Accumulated confusion from figurative language makes
+    the piece feel incoherent or contradictory.
+
+  # personas/dynamic/visualizer.yaml
+  name: The Visualizer
+  type: dynamic
+  behavior: |
+    Builds mental images from descriptions and analogies.
+    Notices when metaphors clash, images contradict each other,
+    or analogies break down under scrutiny. Sensitive to visual
+    coherence in the writing.
+  focus:
+    - metaphor consistency
+    - analogy accuracy and completeness
+    - visual imagery that contradicts itself
+    - mixed metaphors within or across paragraphs
+  stops_when: |
+    Mental images start contradicting each other,
+    or an analogy is so forced it distracts from the point.
+
+  # personas/dynamic/domain-outsider.yaml
+  name: The Domain Outsider
+  type: dynamic
+  behavior: |
+    Has no background in the topic. Reads with genuine curiosity
+    but hits walls when the author assumes shared knowledge.
+    Jargon, acronyms, and insider references are barriers, not shortcuts.
+  focus:
+    - unexplained jargon and acronyms
+    - assumed prior knowledge
+    - concepts introduced without definition
+    - insider references that exclude newcomers
+  stops_when: |
+    Too many unexplained terms stack up and the piece
+    starts feeling like it was written for someone else.
+
+  # personas/dynamic/skeptic.yaml
+  name: The Skeptic
+  type: dynamic
+  behavior: |
+    Approaches the piece with arms crossed. Not hostile, but needs
+    to be convinced. Looks for credibility signals — credentials,
+    data, specific examples, acknowledged limitations.
+  focus:
+    - credibility signals and authority markers
+    - specificity vs. vagueness
+    - acknowledged limitations and caveats
+    - whether recommendations are earned or assumed
+  stops_when: |
+    The author asks for trust without earning it,
+    or makes recommendations without establishing credibility.
+
+  # personas/dynamic/emotional-reader.yaml
+  name: The Emotional Reader
+  type: dynamic
+  behavior: |
+    Reads with emotional antennae up. Notices tone shifts,
+    empathy gaps, and moments where the author's perspective
+    might alienate readers with different experiences.
+    Sensitive to dismissiveness, condescension, and assumptions
+    about the reader's emotional state.
+  focus:
+    - tone consistency and shifts
+    - empathy and inclusiveness
+    - dismissive or condescending language
+    - assumptions about reader's experience or feelings
+  stops_when: |
+    The tone feels preachy, condescending, or dismissive
+    of experiences different from the author's.
 
   Also create personas/custom/.gitkeep.
 
@@ -1436,6 +1568,18 @@ First Misread Implementation Plan
       assert (output_dir / "persona-details.md").exists()
       assert (output_dir / "rewrites.md").exists()
 
+
+  def test_write_output_no_rewrites(tmp_path, metadata, persona_results, aggregated):
+      output_dir = write_output(
+          base_dir=tmp_path, slug="test-post",
+          title="Test Post", metadata=metadata,
+          results=persona_results, aggregated=aggregated,
+          rewrites=None, total_personas=5,
+      )
+      assert (output_dir / "summary.md").exists()
+      assert (output_dir / "persona-details.md").exists()
+      assert not (output_dir / "rewrites.md").exists()
+
   - Step 2: Run to verify failure
 
   Run: uv run pytest tests/test_output.py -v
@@ -1623,6 +1767,28 @@ First Misread Implementation Plan
       assert validate_input(text) == text
 
 
+  def test_validate_input_boundary_49_words():
+      text = " ".join(["word"] * 49)
+      with pytest.raises(ValueError, match="too short"):
+          validate_input(text)
+
+
+  def test_validate_input_boundary_50_words():
+      text = " ".join(["word"] * 50)
+      assert validate_input(text) == text
+
+
+  def test_validate_input_boundary_2500_words():
+      text = " ".join(["word"] * 2500)
+      assert validate_input(text) == text
+
+
+  def test_validate_input_boundary_2501_words():
+      text = " ".join(["word"] * 2501)
+      with pytest.raises(ValueError, match="too long"):
+          validate_input(text)
+
+
   def test_make_slug_from_filename():
       assert make_slug(file_path=Path("my-draft-post.md")) == "my-draft-post"
 
@@ -1639,21 +1805,20 @@ First Misread Implementation Plan
 
       mock_selector_response = {"dynamic_personas": []}
       mock_persona_response = {
-          "persona": "The Scanner",
+          "persona": "Test",
           "behavior_executed": "Scanned",
           "time_simulated": "10s",
           "overall_verdict": "OK",
           "findings": [],
       }
 
+      async def mock_call(system: str, user: str, **kwargs):
+          if "select" in system.lower() or "dynamic_personas" in user.lower():
+              return mock_selector_response
+          return mock_persona_response
+
       mock_client = AsyncMock()
-      mock_client.call = AsyncMock(side_effect=[
-          mock_selector_response,
-          mock_persona_response,
-          mock_persona_response,
-          mock_persona_response,
-          mock_persona_response,
-      ])
+      mock_client.call = AsyncMock(side_effect=mock_call)
 
       personas_dir = tmp_path / "personas"
       for sub in ["core", "dynamic", "custom"]:
@@ -1912,9 +2077,58 @@ First Misread Implementation Plan
   cd /path/to/first-misread
   uv run python -m first_misread.cli [file_path] [--text "..."] [--no-rewrites]
 
-  - [ ] **Step 4: Commit**
+  - Step 4: Write CLI test
 
-  git add src/first_misread/cli.py skill/SKILL.md pyproject.toml
+  # tests/test_cli.py
+  import pytest
+  from pathlib import Path
+  from unittest.mock import patch, AsyncMock
+  from click.testing import CliRunner
+  from first_misread.cli import main
+
+
+  @pytest.fixture
+  def runner():
+      return CliRunner()
+
+
+  @pytest.fixture
+  def mock_pipeline(tmp_path):
+      output_dir = tmp_path / "2026-01-01-000000-test"
+      output_dir.mkdir()
+      (output_dir / "summary.md").write_text("# First Misread Report\n\nTest summary.")
+      (output_dir / "persona-details.md").write_text("# Persona Details\n")
+      return output_dir
+
+
+  def test_cli_with_file(runner, tmp_path, mock_pipeline):
+      input_file = tmp_path / "post.md"
+      input_file.write_text(" ".join(["word"] * 200))
+      with patch("first_misread.cli.run_pipeline", new_callable=AsyncMock, return_value=mock_pipeline):
+          result = runner.invoke(main, [str(input_file)])
+      assert result.exit_code == 0
+      assert "First Misread Report" in result.output
+
+
+  def test_cli_with_text_option(runner, mock_pipeline):
+      text = " ".join(["word"] * 200)
+      with patch("first_misread.cli.run_pipeline", new_callable=AsyncMock, return_value=mock_pipeline):
+          result = runner.invoke(main, ["--text", text])
+      assert result.exit_code == 0
+
+
+  def test_cli_no_input(runner):
+      result = runner.invoke(main, [])
+      assert result.exit_code == 1
+
+  - Step 5: Run CLI tests
+
+  Run: uv run pytest tests/test_cli.py -v
+  Expected: PASS
+
+  - [ ] **Step 6: Commit**
+
+  git add src/first_misread/cli.py skill/SKILL.md pyproject.toml tests/test_cli.py
   git commit -m "feat: CLI entry point and Claude Code skill definition"
 
   ---
@@ -1945,6 +2159,6 @@ First Misread Implementation Plan
 
   - Step 4: Commit and push
 
-  git add -A
-  git commit -m "feat: complete v1 implementation of first-misread"
+  git add session-notes/INDEX.md session-notes/*.md
+  git commit -m "docs: update session notes for v1 implementation"
   git push origin main

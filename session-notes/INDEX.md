@@ -1,11 +1,21 @@
 # Session Notes - First Misread
 
 **Project Started**: 2026-03-22
-**Last Updated**: 2026-03-23
+**Last Updated**: 2026-03-24
 
 ---
 
 ## Active Sessions
+
+### 2026-03-24 - Product Direction & Competitive Analysis
+- **Status**: Complete
+- **Focus**: Market research, product direction (Chrome extension vs web app), competitive landscape
+- **Key Outcomes**: No direct competitors exist — empty category. Chrome extension agreed as next step.
+- **Next Steps**: Chrome extension architecture, custom persona tool, selector tuning
+
+---
+
+## Completed Sessions
 
 ### 2026-03-24 - First Live Runs
 - **Status**: Complete
@@ -49,5 +59,10 @@
 - [x] Fix 8 plan review issues in the plan document
 - [x] Execute implementation plan (13 tasks)
 - [x] Live smoke test with real blog post
-- [ ] Real end-to-end test with ANTHROPIC_API_KEY set
-- [ ] Test with an actual draft post (not synthetic text)
+- [x] Real end-to-end test with ANTHROPIC_API_KEY set
+- [x] Test with actual draft posts (3 real tests: roadmaps, citizenship, AI writing)
+- [x] Competitive analysis — confirmed empty category
+- [ ] Chrome extension architecture design
+- [ ] Custom persona creation tool
+- [ ] Selector tuning (dynamic persona selection quality)
+- [ ] Substack-specific integration
