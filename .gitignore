@@ -29,3 +29,6 @@ build/
 
 # Generated reports
 output/
+
+# Worktrees
+.worktrees/
