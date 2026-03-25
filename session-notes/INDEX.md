@@ -1,11 +1,21 @@
 # Session Notes - First Misread
 
 **Project Started**: 2026-03-22
-**Last Updated**: 2026-03-24
+**Last Updated**: 2026-03-25
 
 ---
 
 ## Active Sessions
+
+### 2026-03-25 - Chrome Extension Build (Task 2)
+- **Status**: In Progress
+- **Focus**: Task 2 — Persona YAML to JS conversion, TDD, bundled personas module
+- **Key Outcomes**: 4 core + 5 dynamic personas bundled; 4 tests passing; prebuild/predev hooks added
+- **Next Steps**: Task 3 (Models JS port), Task 7 (Persona Selector JS port)
+
+---
+
+## Completed Sessions
 
 ### 2026-03-24 - Product Direction & Competitive Analysis
 - **Status**: Complete
@@ -62,7 +72,7 @@
 - [x] Real end-to-end test with ANTHROPIC_API_KEY set
 - [x] Test with actual draft posts (3 real tests: roadmaps, citizenship, AI writing)
 - [x] Competitive analysis — confirmed empty category
-- [ ] Chrome extension architecture design
+- [ ] Chrome extension architecture design (in progress — Task 2 done)
 - [ ] Custom persona creation tool
 - [ ] Selector tuning (dynamic persona selection quality)
 - [ ] Substack-specific integration
