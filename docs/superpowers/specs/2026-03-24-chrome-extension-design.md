@@ -26,12 +26,14 @@ A Chrome extension that brings First Misread's behavioral reading simulation dir
 - Content extraction from active tab (platform-specific selectors for Substack, Medium, Google Docs + generic fallback)
 - Streaming persona progress (personas complete live, findings appear incrementally)
 - Aggregated results view with severity levels and signal strength
+- **Feedback interaction: dismiss/accept findings, page-scoped persistence across re-runs**
 - Settings management (provider, key, model, preferences)
 - All 9 bundled personas (4 core + 5 dynamic)
 
 **Out of scope (v1 stage 1):**
 - Custom persona creation (v1 stage 2 — Pro tier)
 - Results history / saved analyses (v1 stage 2 — Pro tier)
+- Cross-session persona preferences / adaptive persona selection (Tier 2/3 — see Feedback Interaction Model)
 - Backend / hosted tier (v2)
 - Rewrite suggestions (defer to keep v1 focused on the core feedback loop)
 - Chrome Web Store publishing (manual install via developer mode for initial testing)
@@ -238,6 +240,111 @@ The side panel opens a persistent port to the service worker via `chrome.runtime
 
 ---
 
+## Feedback Interaction Model
+
+### Design Principle
+
+The tool's value comes from surfacing blind spots — but not every finding is a blind spot. Some are wrong-genre critiques (Skeptic wanting sources in a personal essay), some conflict with deliberate style choices (Scanner wanting headings in a 240-word post), and some flag real platform constraints the tool doesn't know about. Writers need to triage findings, not just read them.
+
+The interaction model respects the writer's judgment: findings can be dismissed or accepted, and that state persists across re-runs on the same page. This means iterating on a draft doesn't resurface noise you've already filtered.
+
+### Finding States
+
+Each aggregated finding has a `status` field:
+
+```
+pending → dismissed | accepted
+```
+
+- **`pending`** — default state, finding is visible and unacted-on
+- **`dismissed`** — writer has seen it and decided it doesn't apply. Finding collapses to a single muted line (still visible, not deleted — the writer might change their mind)
+- **`accepted`** — writer agrees this is a real issue. Finding stays prominent, acts as a revision checklist item
+
+Findings start as `pending`. The writer can toggle between states at any time. There's no "resolved" state — if the writer fixes the issue and re-runs, a dismissed or accepted finding that no longer matches anything in the new results simply disappears.
+
+### UI Changes
+
+**FindingCard** gains two action buttons:
+- **Dismiss** (×) — collapses the finding, moves it to a "Dismissed" section at the bottom
+- **Accept** (✓) — marks as accepted, keeps it prominent with a subtle highlight
+
+**ResultsSummary** gains a filter toggle:
+- Default view: pending + accepted findings (dismissed findings collapsed at the bottom)
+- "Show all" toggle: reveals dismissed findings inline at their original severity position
+
+**FindingCard (dismissed state)**:
+- Single line: severity dot + truncated description + persona count + "Restore" button
+- Muted styling (lower opacity, no expand affordance)
+- Grouped under a "Dismissed (N)" collapsible section
+
+**Finding counts** in the header summary reflect only pending + accepted findings, not dismissed ones. This means your "3 high-severity findings" count goes down as you dismiss noise — the number reflects real issues, not raw output.
+
+### Persistence Across Re-runs (Page-Scoped)
+
+When the writer re-runs analysis on the same page, dismissed and accepted findings carry forward — but only if they match a finding in the new results. This is page-scoped: persistence is tied to the tab's URL origin + pathname, and dies when the tab closes or navigates away.
+
+**Matching algorithm**: A dismissed/accepted finding from run N matches a finding in run N+1 if:
+
+1. **Same persona overlap** — at least one flagging persona in common
+2. **Similar location** — the quoted text overlaps with a passage in the new results (token overlap ratio > 0.5)
+3. **Similar description** — the finding descriptions have high token overlap (ratio > 0.6)
+
+All three conditions must hold. This is intentionally conservative — if you edit the passage substantially and the persona flags it again with a *different* complaint, that's a new finding, not a match for the dismissed one.
+
+**Storage**: Feedback state is held in the service worker's in-memory state, keyed by URL origin + pathname. Not persisted to `chrome.storage` — closing the tab loses it. This is the correct boundary for v1: page-scoped, session-scoped, zero cleanup needed.
+
+```javascript
+// In-memory feedback state (service worker)
+// feedbackState: Map<string, Map<string, FindingFeedback>>
+//   key: url origin + pathname
+//   value: Map<findingFingerprint, { status, timestamp }>
+
+// Finding fingerprint: hash of (persona names + quoted text prefix + description prefix)
+// Used for matching across re-runs, not exact equality
+```
+
+### State Management Update
+
+```javascript
+{
+  status: "idle" | "extracting" | "analyzing" | "complete" | "error",
+  metadata: { wordCount, readTime, ... } | null,
+  personas: [
+    { name, status: "waiting" | "reading" | "done" | "error", findings: [] }
+  ],
+  aggregatedFindings: [
+    {
+      ...existingFields,
+      feedbackStatus: "pending" | "dismissed" | "accepted"
+    }
+  ],
+  feedbackCounts: { pending: 0, dismissed: 0, accepted: 0 },
+  error: string | null
+}
+```
+
+### Message Passing Addition
+
+```
+Side Panel                    Service Worker
+    │                              │
+    │── "feedback:update" ────────▶│  { findingFingerprint, status }
+    │◀── "feedback:applied" ──────│  { updatedCounts }
+    │                              │
+    │── "analyze-page" ──────────▶│  (re-run: service worker matches
+    │                              │   prior feedback state to new findings)
+```
+
+### Future Tiers (Out of Scope for v1)
+
+**Tier 2 — Cross-run persona preferences**: If a writer consistently dismisses Scanner and Skimmer findings, the tool could learn to de-emphasize those personas or exclude them from future runs. Requires persisting feedback patterns to `chrome.storage`.
+
+**Tier 3 — Reasoned dismissals + adaptive selection**: Writers provide a reason when dismissing ("wrong genre," "deliberate style choice," "platform constraint"). The persona selector uses this context to make smarter choices — e.g., don't select the Skeptic for personal essays if the writer has repeatedly dismissed genre-mismatch findings.
+
+These tiers are a natural extension of the v1 data model. The `feedbackStatus` field and fingerprinting approach don't need to change — only where the data is persisted and whether it feeds back into the pipeline.
+
+---
+
 ## UI Components (Preact)
 
 ### Component Tree
@@ -259,7 +366,9 @@ App
 │   ├── PersonaProgress (streaming state)
 │   │   └── PersonaRow (per persona: status, name, finding count)
 │   ├── ResultsSummary (aggregated findings)
-│   │   ├── FindingCard (severity, description, personas)
+│   │   ├── FeedbackFilter (show all / hide dismissed toggle)
+│   │   ├── FindingCard (severity, description, personas, dismiss/accept actions)
+│   │   ├── DismissedSection (collapsible, muted dismissed findings)
 │   │   └── PersonaVerdicts (pill badges)
 │   └── FindingDetail (expanded view of single finding)
 └── Settings
@@ -270,7 +379,7 @@ App
 
 ### State Management
 
-Preact signals or `useReducer` for analysis state:
+Preact signals or `useReducer` for analysis state (see also [Feedback Interaction Model](#feedback-interaction-model) for `feedbackStatus` fields):
 
 ```javascript
 {
@@ -279,7 +388,10 @@ Preact signals or `useReducer` for analysis state:
   personas: [
     { name, status: "waiting" | "reading" | "done" | "error", findings: [] }
   ],
-  aggregatedFindings: [],
+  aggregatedFindings: [
+    { ...finding, feedbackStatus: "pending" | "dismissed" | "accepted" }
+  ],
+  feedbackCounts: { pending: 0, dismissed: 0, accepted: 0 },
   error: string | null
 }
 ```

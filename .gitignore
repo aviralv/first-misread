@@ -32,3 +32,6 @@ output/
 
 # Worktrees
 .worktrees/
+
+# Superpowers plugin cache
+.superpowers/

@@ -1,0 +1,24 @@
+{
+  "name": "first-misread-extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "prebuild": "node scripts/convert-personas.js",
+    "predev": "node scripts/convert-personas.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "preact": "^10.25.0"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.9.0",
+    "jsdom": "^29.0.1",
+    "vite": "^6.0.0",
+    "vitest": "^3.0.0",
+    "yaml": "^2.7.0"
+  }
+}

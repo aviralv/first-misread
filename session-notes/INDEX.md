@@ -1,31 +1,37 @@
 # Session Notes - First Misread
 
 **Project Started**: 2026-03-22
-**Last Updated**: 2026-03-25
+**Last Updated**: 2026-03-26
 
 ---
 
 ## Active Sessions
 
-### 2026-03-25 - Chrome Extension Build (Task 2)
-- **Status**: In Progress
-- **Focus**: Task 2 — Persona YAML to JS conversion, TDD, bundled personas module
-- **Key Outcomes**: 4 core + 5 dynamic personas bundled; 4 tests passing; prebuild/predev hooks added
-- **Next Steps**: Task 3 (Models JS port), Task 7 (Persona Selector JS port)
+### 2026-03-26 - Chrome Extension Full Implementation
+- **Status**: Complete
+- **Focus**: Tasks 3-17 — Full Chrome extension build (core logic, UI, build pipeline)
+- **Key Outcomes**: 58 tests passing across 10 suites; clean Vite build; full UI (onboarding, analyzer, settings)
+- **Next Steps**: Manual smoke test in Chrome, test on real pages
 
 ---
 
 ## Completed Sessions
+
+### 2026-03-25 - Chrome Extension Build (Task 2)
+- **Status**: Complete
+- **Focus**: Task 2 — Persona YAML to JS conversion, TDD, bundled personas module
+- **Key Outcomes**: 4 core + 5 dynamic personas bundled; 4 tests passing; prebuild/predev hooks added
+- **Next Steps**: ~~Task 3 (Models JS port), Task 7 (Persona Selector JS port)~~ Done in 2026-03-26
+
+---
 
 ### 2026-03-24 - Product Direction & Competitive Analysis
 - **Status**: Complete
 - **Focus**: Market research, product direction (Chrome extension vs web app), competitive landscape
 - **Key Outcomes**: No direct competitors exist — empty category. Chrome extension agreed as next step.
-- **Next Steps**: Chrome extension architecture, custom persona tool, selector tuning
+- **Next Steps**: ~~Chrome extension architecture, custom persona tool, selector tuning~~ Extension built
 
 ---
-
-## Completed Sessions
 
 ### 2026-03-24 - First Live Runs
 - **Status**: Complete
@@ -35,18 +41,14 @@
 
 ---
 
-## Completed Sessions
-
 ### 2026-03-23 - V1 Implementation
 - **Status**: Complete
 - **Focus**: Fixed 8 plan review issues, executed 13-task implementation plan (subagent-driven)
 - **Key Outcomes**: 49 tests passing, full pipeline built, CLI smoke test passed with graceful degradation
 - **Artifacts**: src/first_misread/ (8 modules), personas/ (9 YAMLs), skill/SKILL.md, tests/ (49 tests)
-- **Next Steps**: Real API test with actual ANTHROPIC_API_KEY, test with real draft post
+- **Next Steps**: ~~Real API test with actual ANTHROPIC_API_KEY, test with real draft post~~ Done
 
 ---
-
-## Completed Sessions
 
 ### 2026-03-22 - Brainstorming & Planning
 - **Status**: Complete
@@ -72,7 +74,8 @@
 - [x] Real end-to-end test with ANTHROPIC_API_KEY set
 - [x] Test with actual draft posts (3 real tests: roadmaps, citizenship, AI writing)
 - [x] Competitive analysis — confirmed empty category
-- [ ] Chrome extension architecture design (in progress — Task 2 done)
+- [x] Chrome extension full implementation (Tasks 1-17)
+- [ ] Manual smoke test in Chrome (load unpacked, onboarding, real page analysis)
 - [ ] Custom persona creation tool
 - [ ] Selector tuning (dynamic persona selection quality)
 - [ ] Substack-specific integration
