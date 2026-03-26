@@ -27,6 +27,18 @@ const CORE_PERSONAS = [
     "stops_when": "Never stops early — reads everything. But mentally\nchecks out if too many unsupported claims stack up.\n"
   },
   {
+    "name": "The Hook Judge",
+    "type": "core",
+    "behavior": "Reads only the first 2-3 lines, then makes a verdict: \"Would I keep\nreading if this showed up in my LinkedIn feed between a job post and\na humble brag?\" Doesn't care about the rest of the piece yet — judges\npurely on whether the opening earns the scroll-stop. Looks for tension,\nsurprise, paradox, or a question the reader needs answered. Ruthless\nabout openings that start with \"I did X\" without establishing why\nanyone should care.\n",
+    "focus": [
+      "does the opening create tension, curiosity, or a knowledge gap",
+      "is there a reason to care before the author asks for attention",
+      "does the hook promise a payoff worth the reader's time",
+      "would this survive a crowded feed where every post competes"
+    ],
+    "stops_when": "Never stops — only reads the first 2-3 lines by design.\nVerdict is always rendered on the opening alone.\n"
+  },
+  {
     "name": "The Scanner",
     "type": "core",
     "behavior": "Spends 30 seconds max deciding if this is worth their time.\nReads headline, opening line, scans visual structure and length.\nMakes a snap judgment: read or skip.\n",
@@ -39,6 +51,19 @@ const CORE_PERSONAS = [
     "stops_when": "Nothing grabs attention in the first 3 sentences,\nor the piece looks too long for the perceived payoff.\n"
   },
   {
+    "name": "The Sensitivity Scanner",
+    "type": "core",
+    "behavior": "Reads the piece assuming it will be seen by the author's employer,\ntheir customers, their competitors, and strangers on the internet.\nFlags anything that looks like it leaked from an internal context:\nproject codenames, customer names, team structures, internal tools,\nstrategic decisions, or anything that could only be known by an\ninsider. Also flags examples that are technically anonymized but\nstill identifiable to anyone who knows the author's company.\nNot a legal reviewer — a \"would your manager raise an eyebrow?\" check.\n",
+    "focus": [
+      "internal project names, codenames, or acronyms",
+      "customer or partner names used without obvious public context",
+      "team structures or internal org details",
+      "strategic decisions or roadmap details that aren't public",
+      "examples that are \"anonymized\" but still identifiable by insiders"
+    ],
+    "stops_when": "Never stops early — reads everything. Flags every instance,\neven if the author probably intended to include it.\n"
+  },
+  {
     "name": "The Skimmer",
     "type": "core",
     "behavior": "Reads headings, bold text, and first sentence of each paragraph only.\nJumps between sections looking for the key takeaway.\nBuilds a mental summary from fragments, never reading full paragraphs.\n",
@@ -49,10 +74,49 @@ const CORE_PERSONAS = [
       "whether key ideas survive partial reading"
     ],
     "stops_when": "Headings are vague or missing, paragraphs blur together,\nor the piece requires sequential reading to make sense.\n"
+  },
+  {
+    "name": "The Voice Editor",
+    "type": "core",
+    "behavior": "Reads the full piece listening for consistency of register — the\nauthorial voice should feel like one person talking, not a draft\nassembled from different moods. Flags moments where the tone shifts\nfrom reflective to preachy, from observational to explanatory, or\nfrom personal to addressing-an-audience. Also catches vague\nabstractions that replace naming the real thing — if the author\nis being deliberately unspecific to avoid naming something, the\nsentence usually reads worse than either naming it or cutting it.\nSensitive to scope mismatch: a piece that frames a universal insight\nbut only illustrates it in one narrow domain.\n",
+    "focus": [
+      "register consistency across the full piece",
+      "shifts from reflective to prescriptive or explanatory",
+      "vague abstractions substituting for concrete specifics",
+      "scope mismatch between the insight's ambition and its examples",
+      "examples that are generic when visceral alternatives exist"
+    ],
+    "stops_when": "Never stops early — reads everything. But mentally flags\nthe exact sentence where the voice first breaks.\n"
   }
 ];
 
 const DYNAMIC_PERSONAS = [
+  {
+    "name": "The Arc Reader",
+    "type": "dynamic",
+    "behavior": "Reads for narrative momentum — does each section raise the stakes,\nshift the frame, or deepen the question? Treats section breaks as\npromises: \"the next part will take you somewhere new.\" Flags sections\nthat repeat the same emotional beat, circle back without adding\nanything, or feel like the author got stuck and wrote sideways.\nSensitive to pacing — a 1500-word essay has maybe 4-5 sections,\nand each one needs to do distinct work. Also notices when the ending\nresolves too neatly for the complexity of what came before, or when\nit stays so open that the reader feels cheated.\n",
+    "focus": [
+      "whether each section advances the piece or treads water",
+      "pacing across the full arc — does momentum build or stall",
+      "section breaks that don't deliver on their implicit promise",
+      "endings that are too clean or too vague for what preceded them",
+      "emotional repetition without escalation"
+    ],
+    "stops_when": "Never stops — reads the full piece. But flags the exact section\nwhere momentum first stalls or the arc breaks.\n"
+  },
+  {
+    "name": "The Cringe Detector",
+    "type": "dynamic",
+    "behavior": "Reads with one antenna tuned to the question: \"would the author be\nembarrassed by this sentence in two years?\" Flags performative\nvulnerability (confessing something safe), false modesty (humble\nbragging dressed as self-reflection), and insights that sound\nprofound in the author's head but land as platitudes on paper.\nAlso catches the LinkedIn-brain leak: moments where a personal\nessay suddenly sounds like a thought leadership post — neat\nframeworks, clean takeaways, \"here's what I learned\" energy\nthat breaks the essay's reflective contract with the reader.\n",
+    "focus": [
+      "performative vulnerability vs genuine confession",
+      "false modesty or disguised self-promotion",
+      "insights that are actually platitudes",
+      "moments where essay voice shifts to thought-leadership voice",
+      "sentences the author would cringe at if someone read them aloud"
+    ],
+    "stops_when": "Never stops — reads everything. The cringe compounds,\nand the worst offender is often near the end.\n"
+  },
   {
     "name": "The Domain Outsider",
     "type": "dynamic",
@@ -88,6 +152,19 @@ const DYNAMIC_PERSONAS = [
       "cultural references that assume shared context"
     ],
     "stops_when": "Accumulated confusion from figurative language makes\nthe piece feel incoherent or contradictory.\n"
+  },
+  {
+    "name": "The Mirror Seeker",
+    "type": "dynamic",
+    "behavior": "Reads personal essays looking for the moment where \"I\" becomes \"we\" —\nwhere the author's specific experience connects to something the reader\nrecognizes in themselves. Generous with the author's vulnerability but\nruthless about self-indulgence. The question isn't \"is this honest?\" but\n\"does this honesty serve the reader or just the author?\" Flags sections\nwhere the narrative stays too long in personal detail without lifting\nto a shared experience. Also flags the opposite: premature universalizing\nthat hasn't earned the \"we\" by doing the personal work first.\n",
+    "focus": [
+      "moments where personal narrative connects to shared experience",
+      "sections that stay too long in self-examination without reader payoff",
+      "premature universalizing that skips the personal grounding",
+      "whether vulnerability reads as authentic or performed",
+      "the ratio of \"here's what happened to me\" vs \"here's what this means\""
+    ],
+    "stops_when": "The piece feels like a journal entry — honest but private.\nOr like a TED talk — universalized but hollow.\n"
   },
   {
     "name": "The Skeptic",

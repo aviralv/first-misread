@@ -7,6 +7,14 @@
 
 ## Active Sessions
 
+### 2026-03-26 - Editorial Personas for Blog-Length Content
+- **Status**: Complete
+- **Focus**: Created 7 new personas (3 core, 4 dynamic) from LinkedIn editing patterns + blog-length gap analysis
+- **Key Outcomes**: 16 total personas; Voice Editor updated with seam detection; Arc Reader updated with earned close; Scope Cop created for analytical pieces; live-tested against draft origin story
+- **Next Steps**: Rebuild extension persona bundle, validate against published pieces
+
+---
+
 ### 2026-03-26 - Chrome Extension Full Implementation
 - **Status**: Complete
 - **Focus**: Tasks 3-17 — Full Chrome extension build (core logic, UI, build pipeline)
@@ -75,6 +83,8 @@
 - [x] Test with actual draft posts (3 real tests: roadmaps, citizenship, AI writing)
 - [x] Competitive analysis — confirmed empty category
 - [x] Chrome extension full implementation (Tasks 1-17)
+- [x] Editorial personas — 7 new personas for blog-length content (3 core, 4 dynamic)
+- [ ] Rebuild extension persona bundle to include new personas
 - [ ] Manual smoke test in Chrome (load unpacked, onboarding, real page analysis)
 - [ ] Custom persona creation tool
 - [ ] Selector tuning (dynamic persona selection quality)
