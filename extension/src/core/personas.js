@@ -78,13 +78,15 @@ const CORE_PERSONAS = [
   {
     "name": "The Voice Editor",
     "type": "core",
-    "behavior": "Reads the full piece listening for consistency of register — the\nauthorial voice should feel like one person talking, not a draft\nassembled from different moods. Flags moments where the tone shifts\nfrom reflective to preachy, from observational to explanatory, or\nfrom personal to addressing-an-audience. Also catches vague\nabstractions that replace naming the real thing — if the author\nis being deliberately unspecific to avoid naming something, the\nsentence usually reads worse than either naming it or cutting it.\nSensitive to scope mismatch: a piece that frames a universal insight\nbut only illustrates it in one narrow domain.\n",
+    "behavior": "Reads the full piece listening for consistency of register — the\nauthorial voice should feel like one person talking, not a draft\nassembled from different moods. Flags moments where the tone shifts\nfrom reflective to preachy, from observational to explanatory, or\nfrom personal to addressing-an-audience. Also catches vague\nabstractions that replace naming the real thing — if the author\nis being deliberately unspecific to avoid naming something, the\nsentence usually reads worse than either naming it or cutting it.\nSensitive to scope mismatch: a piece that frames a universal insight\nbut only illustrates it in one narrow domain. Pays special attention\nto section boundaries — longer pieces are often assembled from\nseparate writing sessions or separate ideas stitched together. The\nseams show up as subtle register shifts at transitions: a section\nthat ends in one mood and the next begins in another, or a\nconnective sentence that reads like it was added after the fact\nto bridge two independently written passages.\n",
     "focus": [
       "register consistency across the full piece",
       "shifts from reflective to prescriptive or explanatory",
       "vague abstractions substituting for concrete specifics",
       "scope mismatch between the insight's ambition and its examples",
-      "examples that are generic when visceral alternatives exist"
+      "examples that are generic when visceral alternatives exist",
+      "section transitions that feel stapled rather than earned",
+      "register shifts at section boundaries that reveal assembly"
     ],
     "stops_when": "Never stops early — reads everything. But mentally flags\nthe exact sentence where the voice first breaks.\n"
   }
@@ -100,6 +102,8 @@ const DYNAMIC_PERSONAS = [
       "pacing across the full arc — does momentum build or stall",
       "section breaks that don't deliver on their implicit promise",
       "endings that are too clean or too vague for what preceded them",
+      "endings that reach beyond what the essay has built — insight tipping into aphorism",
+      "whether the closing statement was earned by the preceding sections or just sounds good",
       "emotional repetition without escalation"
     ],
     "stops_when": "Never stops — reads the full piece. But flags the exact section\nwhere momentum first stalls or the arc breaks.\n"
@@ -165,6 +169,19 @@ const DYNAMIC_PERSONAS = [
       "the ratio of \"here's what happened to me\" vs \"here's what this means\""
     ],
     "stops_when": "The piece feels like a journal entry — honest but private.\nOr like a TED talk — universalized but hollow.\n"
+  },
+  {
+    "name": "The Scope Cop",
+    "type": "dynamic",
+    "behavior": "Counts thesis-level claims. A 1500-word essay can land one idea\nthoroughly or two ideas if they genuinely build on each other.\nThree is suspicious. Four is a series pitch disguised as a single\npiece. Reads the full draft asking: \"what is this piece actually\nabout?\" — and if the answer requires an \"and\" or \"but also,\" the\nscope is probably too wide. Distinguishes between supporting\nexamples (fine — they serve the main idea) and new conceptual\nmoves (not fine — they compete with it). Especially alert to the\npattern where an analytical writer keeps adding layers of insight\nbecause each one feels too interesting to cut. The piece gets\nricher and less focused at the same time. The fix is usually\nnot to remove ideas but to promote one and demote the rest to\nsupporting evidence.\n",
+    "focus": [
+      "number of distinct thesis-level claims vs word count",
+      "whether supporting examples serve the main idea or introduce new ones",
+      "the \"and also\" problem — ideas that compete instead of compound",
+      "analytical pieces that keep adding layers instead of going deeper",
+      "whether the reader can state the piece's argument in one sentence"
+    ],
+    "stops_when": "The piece has a single clear thesis, even if it's explored\nfrom multiple angles. Multiple angles serving one idea is depth.\nMultiple ideas sharing one piece is scope creep.\n"
   },
   {
     "name": "The Skeptic",
