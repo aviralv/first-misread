@@ -2,6 +2,7 @@ import pytest
 from pathlib import Path
 from unittest.mock import AsyncMock
 from first_misread.pipeline import run_pipeline, validate_input, make_slug
+import json
 
 
 def test_validate_input_too_short():
@@ -91,3 +92,58 @@ async def test_pipeline_end_to_end(tmp_path):
     assert result.exists()
     assert (result / "summary.md").exists()
     assert (result / "persona-details.md").exists()
+
+
+async def test_pipeline_writes_run_json(tmp_path):
+    """Pipeline should write run.json and input.md in output directory."""
+    personas_dir = tmp_path / "personas"
+    personas_dir.mkdir()
+    (personas_dir / "core").mkdir()
+    (personas_dir / "dynamic").mkdir()
+    (personas_dir / "custom").mkdir()
+
+    core_persona = personas_dir / "core" / "scanner.yaml"
+    core_persona.write_text("""
+name: The Scanner
+type: core
+behavior: Scan the content quickly
+focus:
+  - structure
+  - headings
+stops_when: 30 seconds pass
+""")
+
+    output_dir = tmp_path / "output"
+    output_dir.mkdir()
+
+    mock_client = AsyncMock()
+    mock_client.model = "claude-sonnet-4-6"
+    mock_client.call = AsyncMock(side_effect=[
+        {"dynamic_personas": []},
+        {
+            "persona": "The Scanner",
+            "behavior_executed": "Scanned quickly",
+            "time_simulated": "30s",
+            "overall_verdict": "Looks fine",
+            "findings": [],
+        },
+    ])
+
+    text = "A " * 60
+
+    result_dir = await run_pipeline(
+        text=text,
+        personas_dir=personas_dir,
+        output_dir=output_dir,
+        client=mock_client,
+        include_rewrites=False,
+    )
+
+    assert (result_dir / "run.json").exists()
+    assert (result_dir / "input.md").exists()
+
+    run_data = json.loads((result_dir / "run.json").read_text())
+    assert run_data["word_count"] == 60
+    assert "The Scanner" in run_data["personas_run"]
+
+    assert (result_dir / "input.md").read_text().strip() == text.strip()
