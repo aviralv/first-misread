@@ -74,3 +74,48 @@ class RewriteSuggestion(BaseModel):
     problem_summary: str
     suggested_rewrite: str
     personas_that_flagged: list[str]
+
+
+class PersonaVerdict(BaseModel):
+    """Compact persona verdict for run records."""
+
+    persona: str
+    verdict: str
+    key_issue: str
+
+
+class RunRecord(BaseModel):
+    """Structured record of a single pipeline run."""
+
+    run_id: str
+    timestamp: str
+    slug: str
+    content_hash: str
+    word_count: int
+    model: str
+    personas_run: list[str]
+    parent_run_id: str | None = None
+    metadata: ContentMetadata
+    findings: list[AggregatedFinding]
+    persona_verdicts: list[PersonaVerdict]
+
+
+class FindingDiff(BaseModel):
+    """Comparison of a finding across two runs."""
+
+    status: Literal["resolved", "persists", "new", "regressed"]
+    current_finding: AggregatedFinding | None = None
+    parent_finding: AggregatedFinding | None = None
+    severity_change: str | None = None
+    persona_count_change: int | None = None
+    run_streak: int = 0
+
+
+class RevisionNotes(BaseModel):
+    """Output of the revision interpreter."""
+
+    what_landed: list[str]
+    what_persists: list[str]
+    what_regressed: list[str]
+    revision_pattern: str
+    suggestion: str
