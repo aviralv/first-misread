@@ -12,6 +12,7 @@ from first_misread.claude_client import ClaudeClient
 from first_misread.differ import diff_findings
 from first_misread.history import HistoryManager
 from first_misread.interpreter import interpret_revision
+from first_misread.models import RunRecord
 from first_misread.output import write_output
 from first_misread.personas import load_all_personas
 from first_misread.rewriter import generate_rewrites
@@ -108,6 +109,7 @@ async def run_pipeline(
     revision_notes = None
     parent_run_id = None
     version_label = ""
+    history = None
 
     if not no_history:
         history = HistoryManager(output_dir)
@@ -164,11 +166,9 @@ async def run_pipeline(
     )
 
     # Register in history
-    if not no_history:
-        history = HistoryManager(output_dir)
+    if history:
         run_json = result_dir / "run.json"
         if run_json.exists():
-            from first_misread.models import RunRecord
             record = RunRecord.model_validate_json(run_json.read_text())
             history.save_run(record)
 

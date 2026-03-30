@@ -225,7 +225,8 @@ def write_output(
     version_label: str = "",
 ) -> Path:
     """Write all output files and return the output directory."""
-    timestamp = datetime.now().strftime("%Y-%m-%d-%H%M%S")
+    now = datetime.now()
+    timestamp = now.strftime("%Y-%m-%d-%H%M%S")
     output_dir = base_dir / f"{timestamp}-{slug}"
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -259,7 +260,7 @@ def write_output(
     ]
     record = RunRecord(
         run_id=run_id,
-        timestamp=datetime.now().isoformat(),
+        timestamp=now.isoformat(),
         slug=slug,
         content_hash=content_hash(input_text) if input_text else "",
         word_count=metadata.word_count,
