@@ -1,17 +1,23 @@
 # Session Notes - First Misread
 
 **Project Started**: 2026-03-22
-**Last Updated**: 2026-03-26
+**Last Updated**: 2026-03-29
 
 ---
 
 ## Active Sessions
 
+### 2026-03-29 - Version History Tracking
+- **Status**: Complete
+- **Focus**: Full version history feature — run records, version chains, finding diffs, revision interpreter
+- **Key Outcomes**: 4 new modules, 4 new models, 3 CLI flags, 71 new tests (98 total passing); merged to main
+- **Next Steps**: Obsidian plugin (design spec ready), fix persona count test assertions
+
 ### 2026-03-26 - Editorial Personas for Blog-Length Content
 - **Status**: Complete
 - **Focus**: Created 7 new personas (3 core, 4 dynamic) from LinkedIn editing patterns + blog-length gap analysis
-- **Key Outcomes**: 16 total personas; Voice Editor updated with seam detection; Arc Reader updated with earned close; Scope Cop created for analytical pieces; live-tested against draft origin story
-- **Next Steps**: Rebuild extension persona bundle, validate against published pieces
+- **Key Outcomes**: 16 total personas; Voice Editor updated with seam detection; Arc Reader updated with earned close; Scope Cop created for analytical pieces; live-tested against draft origin story; extension bundle synced (58 tests passing)
+- **Next Steps**: Validate against published compassion piece, consider Scope Cop for LinkedIn posts
 
 ---
 
@@ -84,7 +90,9 @@
 - [x] Competitive analysis — confirmed empty category
 - [x] Chrome extension full implementation (Tasks 1-17)
 - [x] Editorial personas — 7 new personas for blog-length content (3 core, 4 dynamic)
-- [ ] Rebuild extension persona bundle to include new personas
+- [x] Rebuild extension persona bundle to include new personas
+- [x] Version history tracking — full implementation (8 tasks, merged)
+- [ ] Obsidian plugin (design spec written, depends on version history ✅)
 - [ ] Manual smoke test in Chrome (load unpacked, onboarding, real page analysis)
 - [ ] Custom persona creation tool
 - [ ] Selector tuning (dynamic persona selection quality)

@@ -34,7 +34,13 @@ Ran the updated persona set against a draft origin-story piece ("building with A
 
 **Dynamic (9):** Literal Reader, Visualizer, Domain Outsider, Skeptic, Emotional Reader, Mirror Seeker, Arc Reader, Cringe Detector, Scope Cop
 
+### Extension Bundle Sync
+Rebuilt `extension/src/core/personas.js` to match all 16 YAML personas:
+- Voice Editor: added seam detection focus items
+- Arc Reader: added earned-close focus items
+- Scope Cop: added to dynamic array
+- 58 tests passing, all green
+
 ## Next Steps
-- Rebuild extension persona bundle to include new personas (personas.js is stale)
 - Run the compassion piece (published) through updated set as validation
 - Consider whether Scope Cop should also check LinkedIn posts (they have a tighter word budget)
