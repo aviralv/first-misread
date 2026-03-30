@@ -38,3 +38,52 @@ def test_cli_with_text_option(runner, mock_pipeline):
 def test_cli_no_input(runner):
     result = runner.invoke(main, [])
     assert result.exit_code == 1
+
+
+import json
+
+
+def test_revision_of_flag():
+    runner = CliRunner()
+    result = runner.invoke(main, ["--help"])
+    assert "--revision-of" in result.output
+
+
+def test_no_history_flag():
+    runner = CliRunner()
+    result = runner.invoke(main, ["--help"])
+    assert "--no-history" in result.output
+
+
+def test_history_flag():
+    runner = CliRunner()
+    result = runner.invoke(main, ["--help"])
+    assert "--history" in result.output
+
+
+def test_history_shows_chain(tmp_path):
+    history_data = {
+        "chains": {"test-slug": ["run-1", "run-2"]},
+        "runs": {
+            "run-1": {
+                "timestamp": "2026-03-26T10:13:13",
+                "slug": "test-slug",
+                "content_hash": "abc",
+                "parent_run_id": None,
+            },
+            "run-2": {
+                "timestamp": "2026-03-26T11:00:00",
+                "slug": "test-slug-v2",
+                "content_hash": "def",
+                "parent_run_id": "run-1",
+            },
+        },
+    }
+    (tmp_path / "history.json").write_text(json.dumps(history_data))
+
+    runner = CliRunner()
+    with patch("first_misread.cli.OUTPUT_DIR", tmp_path):
+        result = runner.invoke(main, ["--history", "test-slug"])
+    assert result.exit_code == 0
+    assert "test-slug" in result.output
+    assert "2 runs" in result.output

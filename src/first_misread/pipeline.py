@@ -1,13 +1,18 @@
-"""Main pipeline orchestrator — runs all 5 stages."""
+"""Main pipeline orchestrator — runs all stages."""
 
 from __future__ import annotations
 
+import difflib
 import re
 from pathlib import Path
 
 from first_misread.analyzer import analyze_content
 from first_misread.aggregator import aggregate_findings
 from first_misread.claude_client import ClaudeClient
+from first_misread.differ import diff_findings
+from first_misread.history import HistoryManager
+from first_misread.interpreter import interpret_revision
+from first_misread.models import RunRecord
 from first_misread.output import write_output
 from first_misread.personas import load_all_personas
 from first_misread.rewriter import generate_rewrites
@@ -49,6 +54,8 @@ async def run_pipeline(
     client: ClaudeClient | None = None,
     include_rewrites: bool = True,
     file_path: Path | None = None,
+    revision_of: str | None = None,
+    no_history: bool = False,
 ) -> Path:
     """Run the full First Misread pipeline."""
     client = client or ClaudeClient()
@@ -97,7 +104,50 @@ async def run_pipeline(
             findings=aggregated,
         )
 
-    # Stage 5: Output
+    # Stage 5: History linking
+    diffs = None
+    revision_notes = None
+    parent_run_id = None
+    version_label = ""
+    history = None
+
+    if not no_history:
+        history = HistoryManager(output_dir)
+
+        if revision_of:
+            parent_run_id = history.resolve_parent(revision_of)
+
+        if parent_run_id:
+            chain = history.load_chain(revision_of or parent_run_id)
+
+            diffs = diff_findings(
+                current_findings=aggregated,
+                chain=chain,
+            )
+
+            parent_input = history.load_input(parent_run_id)
+            text_diff = ""
+            if parent_input:
+                diff_lines = difflib.unified_diff(
+                    parent_input.splitlines(),
+                    text.splitlines(),
+                    fromfile="previous",
+                    tofile="current",
+                    lineterm="",
+                )
+                text_diff = "\n".join(diff_lines)
+
+            chain_length = len(chain)
+            version_label = f"v{chain_length} → v{chain_length + 1}"
+
+            revision_notes = await interpret_revision(
+                client=client,
+                diffs=diffs,
+                text_diff=text_diff,
+                chain=chain,
+            )
+
+    # Stage 6: Output
     result_dir = write_output(
         base_dir=output_dir,
         slug=slug,
@@ -107,6 +157,19 @@ async def run_pipeline(
         aggregated=aggregated,
         rewrites=rewrites,
         total_personas=total_personas,
+        input_text=text,
+        model=getattr(client, "model", "") if isinstance(getattr(client, "model", ""), str) else "",
+        parent_run_id=parent_run_id,
+        diffs=diffs,
+        revision_notes=revision_notes,
+        version_label=version_label,
     )
+
+    # Register in history
+    if history:
+        run_json = result_dir / "run.json"
+        if run_json.exists():
+            record = RunRecord.model_validate_json(run_json.read_text())
+            history.save_run(record)
 
     return result_dir
