@@ -18,6 +18,7 @@ Session notes are stored in the Product Kitchen (private repo) to keep this publ
 - [x] Editorial personas — 7 new personas for blog-length content
 - [x] Version history tracking — full implementation (8 tasks, merged)
 - [x] Obsidian plugin — v0.1.0 released, BRAT-compatible, smoke tested
+- [x] Security hardening — git history cleanup, prompt injection XML trust boundaries, .gitignore fixes
 - [ ] Manual smoke test in Chrome (load unpacked, onboarding, real page analysis)
 - [ ] Custom persona creation tool
 - [ ] Selector tuning (dynamic persona selection quality)
