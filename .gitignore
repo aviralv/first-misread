@@ -35,3 +35,6 @@ output/
 
 # Superpowers plugin cache
 .superpowers/
+
+# Claude Code local settings
+.claude/
