@@ -1,11 +1,17 @@
 # Session Notes - First Misread
 
 **Project Started**: 2026-03-22
-**Last Updated**: 2026-03-29
+**Last Updated**: 2026-03-31
 
 ---
 
 ## Active Sessions
+
+### 2026-03-31 - Obsidian Plugin Implementation
+- **Status**: Complete
+- **Focus**: Full Obsidian plugin build (Tasks 3-12), smoke test, BRAT release
+- **Key Outcomes**: 12 commits, 26 tests, 4 bugs found and fixed during smoke test (CORS, silent failures, hidden settings, stale history); v0.1.0 released to GitHub; symlinked into InnerStudio vault and working
+- **Next Steps**: Test version history across runs, install via BRAT, test other providers
 
 ### 2026-03-29 - Version History Tracking
 - **Status**: Complete
@@ -92,7 +98,7 @@
 - [x] Editorial personas — 7 new personas for blog-length content (3 core, 4 dynamic)
 - [x] Rebuild extension persona bundle to include new personas
 - [x] Version history tracking — full implementation (8 tasks, merged)
-- [ ] Obsidian plugin (design spec written, depends on version history ✅)
+- [x] Obsidian plugin — v0.1.0 released, BRAT-compatible, smoke tested
 - [ ] Manual smoke test in Chrome (load unpacked, onboarding, real page analysis)
 - [ ] Custom persona creation tool
 - [ ] Selector tuning (dynamic persona selection quality)
