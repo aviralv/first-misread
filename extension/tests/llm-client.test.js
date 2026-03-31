@@ -48,10 +48,10 @@ describe('AnthropicClient', () => {
     expect(await client.call('sys', 'usr')).toBeNull();
   });
 
-  it('returns null on network error', async () => {
+  it('throws on network error', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network')));
     const client = new AnthropicClient('key', 'model');
-    expect(await client.call('sys', 'usr')).toBeNull();
+    await expect(client.call('sys', 'usr')).rejects.toThrow();
   });
 });
 
