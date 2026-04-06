@@ -12,6 +12,7 @@ export function Analyzer() {
   const [error, setError] = useState(null);
   const [pageUrl, setPageUrl] = useState(null);
   const portRef = useRef(null);
+  const analyzedUrlRef = useRef(null);
 
   useEffect(() => {
     const resetState = () => {
@@ -22,15 +23,24 @@ export function Analyzer() {
       setPageUrl(null);
       setPasteText('');
       setPlatform(null);
+      analyzedUrlRef.current = null;
       if (portRef.current) {
         portRef.current.disconnect();
         portRef.current = null;
       }
     };
 
-    const handleTabActivated = () => resetState();
+    const handleTabActivated = async (activeInfo) => {
+      if (!analyzedUrlRef.current) return;
+      try {
+        const tab = await chrome.tabs.get(activeInfo.tabId);
+        if (tab.url !== analyzedUrlRef.current) resetState();
+      } catch {
+        resetState();
+      }
+    };
     const handleTabUpdated = (tabId, changeInfo) => {
-      if (changeInfo.url) resetState();
+      if (changeInfo.url && changeInfo.url !== analyzedUrlRef.current) resetState();
     };
 
     chrome.tabs.onActivated.addListener(handleTabActivated);
@@ -40,6 +50,11 @@ export function Analyzer() {
       chrome.tabs.onUpdated.removeListener(handleTabUpdated);
     };
   }, []);
+
+  const handleHighlight = (passage) => {
+    if (!portRef.current || !pageUrl) return;
+    portRef.current.postMessage({ type: 'highlight:passage', passage });
+  };
 
   const handleFeedback = (index, finding, newStatus) => {
     if (!portRef.current || !pageUrl) return;
@@ -75,6 +90,7 @@ export function Analyzer() {
         case 'progress:extracted':
           setPlatform(msg.platform);
           setPageUrl(msg.url || null);
+          analyzedUrlRef.current = msg.url || null;
           setStatus('analyzing');
           break;
         case 'progress:metadata':
@@ -159,6 +175,7 @@ export function Analyzer() {
             aggregatedFindings={result.aggregatedFindings}
             personaResults={result.personaResults}
             onFeedback={handleFeedback}
+            onHighlight={handleHighlight}
           />
           <div class="spacer" />
           <button class="btn-secondary" onClick={() => setStatus('idle')}>

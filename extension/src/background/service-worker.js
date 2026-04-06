@@ -15,6 +15,8 @@ chrome.runtime.onConnect.addListener((port) => {
       await handleAnalyzeText(port, msg.text);
     } else if (msg.type === 'feedback:update') {
       handleFeedbackUpdate(port, msg);
+    } else if (msg.type === 'highlight:passage') {
+      handleHighlightPassage(port, msg.passage);
     }
   });
 });
@@ -93,4 +95,81 @@ async function runAnalysis(port, text, url) {
     : result.aggregatedFindings;
 
   port.postMessage({ type: 'results:complete', ...result, aggregatedFindings: findingsWithFeedback });
+}
+
+function highlightPassageInPage(passage) {
+  document.querySelectorAll('mark[data-fm-highlight]').forEach(mark => {
+    const parent = mark.parentNode;
+    if (parent) {
+      parent.replaceChild(document.createTextNode(mark.textContent || ''), mark);
+      parent.normalize();
+    }
+  });
+
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      const tag = node.parentElement?.tagName?.toLowerCase();
+      if (tag === 'script' || tag === 'style' || tag === 'noscript') {
+        return NodeFilter.FILTER_REJECT;
+      }
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+
+  const nodes = [];
+  const offsets = [];
+  let total = 0;
+  let node;
+  while ((node = walker.nextNode())) {
+    offsets.push(total);
+    nodes.push(node);
+    total += node.textContent.length;
+  }
+
+  const fullText = nodes.map(n => n.textContent).join('');
+  const idx = fullText.indexOf(passage);
+  if (idx === -1) return false;
+
+  const findNodeAndOffset = (flatOffset) => {
+    for (let i = nodes.length - 1; i >= 0; i--) {
+      if (flatOffset >= offsets[i]) {
+        return [nodes[i], flatOffset - offsets[i]];
+      }
+    }
+    return [nodes[0], 0];
+  };
+
+  const [startNode, startOffset] = findNodeAndOffset(idx);
+  const [endNode, endOffset] = findNodeAndOffset(idx + passage.length);
+
+  const range = document.createRange();
+  range.setStart(startNode, startOffset);
+  range.setEnd(endNode, endOffset);
+
+  try {
+    const mark = document.createElement('mark');
+    mark.setAttribute('data-fm-highlight', '');
+    mark.style.cssText = 'background:#ffd54f;color:inherit;border-radius:2px;padding:0 1px;';
+    range.surroundContents(mark);
+    mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return true;
+  } catch {
+    startNode.parentElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return false;
+  }
+}
+
+async function handleHighlightPassage(port, passage) {
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab) return;
+
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: highlightPassageInPage,
+      args: [passage],
+    });
+  } catch {
+    // Silently fail — tab may have navigated away
+  }
 }

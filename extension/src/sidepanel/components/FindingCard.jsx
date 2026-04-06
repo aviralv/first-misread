@@ -3,7 +3,7 @@ import { signalStrength } from '../../core/models.js';
 
 const SEVERITY_COLORS = { high: '#dc2626', medium: '#ca8a04', low: '#9ca3af' };
 
-export function FindingCard({ finding, onFeedback, compact }) {
+export function FindingCard({ finding, onFeedback, onHighlight, compact }) {
   const [expanded, setExpanded] = useState(false);
 
   if (compact) {
@@ -22,7 +22,7 @@ export function FindingCard({ finding, onFeedback, compact }) {
 
   return (
     <div class={`finding-card ${finding.feedbackStatus === 'accepted' ? 'accepted' : ''}`}
-      onClick={() => setExpanded(!expanded)}>
+      onClick={() => { setExpanded(!expanded); onHighlight?.(); }}>
       <div class="finding-header">
         <span class="severity-badge" style={{ background: SEVERITY_COLORS[finding.severity] }}>
           {finding.severity}

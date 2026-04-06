@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { FindingCard } from './FindingCard.jsx';
 
-export function ResultsSummary({ aggregatedFindings, personaResults, onFeedback }) {
+export function ResultsSummary({ aggregatedFindings, personaResults, onFeedback, onHighlight }) {
   const [showDismissed, setShowDismissed] = useState(false);
 
   const active = aggregatedFindings.filter(f => f.feedbackStatus !== 'dismissed');
@@ -17,7 +17,9 @@ export function ResultsSummary({ aggregatedFindings, personaResults, onFeedback 
       )}
 
       {active.map((f, i) => (
-        <FindingCard key={i} finding={f} onFeedback={(status) => onFeedback(i, f, status)} />
+        <FindingCard key={i} finding={f}
+          onFeedback={(status) => onFeedback(i, f, status)}
+          onHighlight={() => onHighlight?.(f.passage)} />
       ))}
 
       {dismissed.length > 0 && (
