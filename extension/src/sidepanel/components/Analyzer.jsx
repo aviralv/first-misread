@@ -1,4 +1,4 @@
-import { useState, useRef } from 'preact/hooks';
+import { useState, useRef, useEffect } from 'preact/hooks';
 import { PersonaProgress } from './PersonaProgress.jsx';
 import { ResultsSummary } from './ResultsSummary.jsx';
 import { fingerprintFinding } from '../../core/feedback.js';
@@ -12,6 +12,34 @@ export function Analyzer() {
   const [error, setError] = useState(null);
   const [pageUrl, setPageUrl] = useState(null);
   const portRef = useRef(null);
+
+  useEffect(() => {
+    const resetState = () => {
+      setStatus('idle');
+      setError(null);
+      setResult(null);
+      setPersonas([]);
+      setPageUrl(null);
+      setPasteText('');
+      setPlatform(null);
+      if (portRef.current) {
+        portRef.current.disconnect();
+        portRef.current = null;
+      }
+    };
+
+    const handleTabActivated = () => resetState();
+    const handleTabUpdated = (tabId, changeInfo) => {
+      if (changeInfo.url) resetState();
+    };
+
+    chrome.tabs.onActivated.addListener(handleTabActivated);
+    chrome.tabs.onUpdated.addListener(handleTabUpdated);
+    return () => {
+      chrome.tabs.onActivated.removeListener(handleTabActivated);
+      chrome.tabs.onUpdated.removeListener(handleTabUpdated);
+    };
+  }, []);
 
   const handleFeedback = (index, finding, newStatus) => {
     if (!portRef.current || !pageUrl) return;

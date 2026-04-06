@@ -3,7 +3,7 @@
   "name": "First Misread",
   "version": "0.1.0",
   "description": "Find where your writing gets misunderstood — before a real reader does.",
-  "permissions": ["sidePanel", "activeTab", "storage", "scripting"],
+  "permissions": ["sidePanel", "activeTab", "storage", "scripting", "tabs"],
   "side_panel": {
     "default_path": "src/sidepanel/index.html"
   },
