@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import sys
 from pathlib import Path
 
@@ -23,6 +24,7 @@ OUTPUT_DIR = PROJECT_ROOT / "output"
 @click.option("--revision-of", "revision_of", default=None, help="Link to a previous run by slug or run ID")
 @click.option("--no-history", is_flag=True, help="Skip history tracking entirely")
 @click.option("--history", "show_history", default=None, help="Show chain history for a slug")
+@click.option("--verbose", "-v", is_flag=True, help="Enable debug logging")
 def main(
     input_path: str | None,
     text: str | None,
@@ -30,8 +32,14 @@ def main(
     revision_of: str | None,
     no_history: bool,
     show_history: str | None,
+    verbose: bool,
 ):
     """Run First Misread analysis on written content."""
+    logging.basicConfig(
+        level=logging.DEBUG if verbose else logging.WARNING,
+        format="%(name)s %(levelname)s: %(message)s",
+        stream=sys.stderr,
+    )
     if show_history:
         history = HistoryManager(OUTPUT_DIR)
         if show_history not in history.chains:

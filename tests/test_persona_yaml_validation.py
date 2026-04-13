@@ -6,7 +6,7 @@ PERSONAS_DIR = Path(__file__).parent.parent / "personas"
 
 def test_all_core_personas_load():
     core, _, _ = load_all_personas(PERSONAS_DIR)
-    assert len(core) == 7
+    assert len(core) == 8
     names = {p.name for p in core}
     assert "The Skimmer" in names
     assert "The Busy Reader" in names
@@ -15,6 +15,7 @@ def test_all_core_personas_load():
     assert "The Sensitivity Scanner" in names
     assert "The Voice Editor" in names
     assert "The Executor" in names
+    assert "The Structural Reader" in names
 
 
 def test_all_dynamic_personas_load():

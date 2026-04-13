@@ -15,6 +15,7 @@ from first_misread.models import (
     RevisionNotes,
     RewriteSuggestion,
     RunRecord,
+    Strength,
 )
 
 SEVERITY_EMOJI = {"high": "\U0001f534", "medium": "\U0001f7e1", "low": "\u26aa"}
@@ -26,6 +27,7 @@ def generate_summary(
     results: list[PersonaResult],
     aggregated: list[AggregatedFinding],
     total_personas: int,
+    strengths: list[Strength] | None = None,
 ) -> str:
     """Generate L1 summary markdown."""
     lines = [
@@ -46,6 +48,13 @@ def generate_summary(
         persona_summary = ", ".join(finding.personas)
         lines.append(f"   Flagged by: {persona_summary}")
         lines.append("")
+
+    if strengths:
+        lines.append("## What's Landing")
+        lines.append("")
+        for i, s in enumerate(strengths, 1):
+            lines.append(f"{i}. \"{s.passage}\" ({s.location}) — {s.why}")
+            lines.append("")
 
     lines.append("## Persona Verdicts")
     lines.append("")
@@ -223,6 +232,7 @@ def write_output(
     diffs: list[FindingDiff] | None = None,
     revision_notes: RevisionNotes | None = None,
     version_label: str = "",
+    strengths: list[Strength] | None = None,
 ) -> Path:
     """Write all output files and return the output directory."""
     now = datetime.now()
@@ -230,7 +240,7 @@ def write_output(
     output_dir = base_dir / f"{timestamp}-{slug}"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    summary = generate_summary(title, metadata, results, aggregated, total_personas)
+    summary = generate_summary(title, metadata, results, aggregated, total_personas, strengths=strengths)
 
     if diffs and version_label:
         changes = generate_changes_section(diffs, version_label)

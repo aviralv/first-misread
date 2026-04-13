@@ -6,6 +6,7 @@ from first_misread.models import (
     PersonaResult,
     AggregatedFinding,
     RewriteSuggestion,
+    Strength,
 )
 
 
@@ -277,3 +278,40 @@ def test_revision_notes_creation():
     )
     assert len(notes.what_landed) == 1
     assert "hedges" in notes.revision_pattern
+
+
+def test_finding_type_duplication():
+    f = Finding(
+        type="duplication",
+        severity="medium",
+        passage="This point was already made in paragraph 2",
+        location="paragraph 5, sentence 1",
+        what_happened="Parallel argument",
+        what_persona_understood="Same idea restated",
+        what_author_likely_meant="Building on earlier point",
+    )
+    assert f.type == "duplication"
+
+
+def test_finding_type_structural():
+    f = Finding(
+        type="structural",
+        severity="low",
+        passage="The real thesis lives here",
+        location="paragraph 8",
+        what_happened="Thesis buried in the middle",
+        what_persona_understood="Architectural observation",
+        what_author_likely_meant="Leading with context",
+    )
+    assert f.type == "structural"
+
+
+def test_strength_creation():
+    s = Strength(
+        passage="The word moves.",
+        location="paragraph 8",
+        why="Crystallizes the entire argument in two sentences.",
+    )
+    assert s.passage == "The word moves."
+    assert s.location == "paragraph 8"
+    assert "Crystallizes" in s.why

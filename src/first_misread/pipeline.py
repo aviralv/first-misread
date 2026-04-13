@@ -18,6 +18,7 @@ from first_misread.personas import load_all_personas
 from first_misread.rewriter import generate_rewrites
 from first_misread.selector import select_dynamic_personas
 from first_misread.simulator import simulate_all
+from first_misread.strengths import identify_strengths
 
 MIN_WORDS = 50
 MAX_WORDS = 2500
@@ -95,6 +96,14 @@ async def run_pipeline(
     # Aggregate findings
     aggregated = aggregate_findings(results)
 
+    # Stage 4c: Identify strengths (What's Landing)
+    strengths = await identify_strengths(
+        client=client,
+        text=text,
+        metadata=metadata,
+        results=results,
+    )
+
     # Stage 4b: Rewrite Pass (optional)
     rewrites = None
     if include_rewrites and aggregated:
@@ -163,6 +172,7 @@ async def run_pipeline(
         diffs=diffs,
         revision_notes=revision_notes,
         version_label=version_label,
+        strengths=strengths,
     )
 
     # Register in history

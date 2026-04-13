@@ -65,9 +65,17 @@ async def test_pipeline_end_to_end(tmp_path):
         "findings": [],
     }
 
+    mock_strengths_response = {
+        "strengths": [
+            {"passage": "A strong line.", "location": "p1", "why": "Anchors the argument."},
+        ],
+    }
+
     async def mock_call(system: str, user: str, **kwargs):
         if "select" in system.lower() or "dynamic_personas" in user.lower():
             return mock_selector_response
+        if "strength" in system.lower() or "landing" in system.lower():
+            return mock_strengths_response
         return mock_persona_response
 
     mock_client = AsyncMock()
@@ -127,6 +135,7 @@ stops_when: 30 seconds pass
             "overall_verdict": "Looks fine",
             "findings": [],
         },
+        {"strengths": []},
     ])
 
     text = "A " * 60

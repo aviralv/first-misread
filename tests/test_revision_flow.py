@@ -59,6 +59,7 @@ stops_when: 30 seconds pass
         _make_persona_response("The Scanner", [
             _make_finding_response("The opening line feels unearned"),
         ]),
+        {"strengths": []},
     ])
 
     result_v1 = await run_pipeline(
@@ -86,6 +87,7 @@ stops_when: 30 seconds pass
         _make_persona_response("The Scanner", [
             _make_finding_response("A brand new issue", severity="medium"),
         ]),
+        {"strengths": []},
         {
             "what_landed": ["Opening line was fixed"],
             "what_persists": [],

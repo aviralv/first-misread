@@ -32,7 +32,7 @@ class ContentMetadata(BaseModel):
 class Finding(BaseModel):
     """A single finding from a persona simulation."""
 
-    type: Literal["confusion", "lost_interest", "misread", "skipped"]
+    type: Literal["confusion", "lost_interest", "misread", "skipped", "duplication", "structural"]
     severity: Literal["high", "medium", "low"]
     passage: str
     location: str
@@ -119,3 +119,11 @@ class RevisionNotes(BaseModel):
     what_regressed: list[str]
     revision_pattern: str
     suggestion: str
+
+
+class Strength(BaseModel):
+    """A passage identified as load-bearing during the What's Landing step."""
+
+    passage: str
+    location: str
+    why: str

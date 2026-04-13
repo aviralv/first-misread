@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 from first_misread.output import generate_summary, generate_persona_details, generate_rewrites_md, write_output
 from first_misread.models import (
-    ContentMetadata, PersonaResult, Finding, AggregatedFinding, RewriteSuggestion,
+    ContentMetadata, PersonaResult, Finding, AggregatedFinding, RewriteSuggestion, Strength,
 )
 
 
@@ -237,3 +237,32 @@ def test_write_output_includes_run_record(tmp_path):
     assert (result_dir / "run.json").exists()
     assert (result_dir / "input.md").exists()
     assert (result_dir / "summary.md").exists()
+
+
+def test_generate_summary_with_strengths(metadata, persona_results, aggregated):
+    strengths = [
+        Strength(passage="The word moves.", location="paragraph 8", why="Crystallizes the argument."),
+        Strength(passage="Not all silence is absence.", location="paragraph 3", why="Anchors the emotional turn."),
+    ]
+    md = generate_summary(
+        title="Test Post", metadata=metadata,
+        results=persona_results, aggregated=aggregated,
+        total_personas=5, strengths=strengths,
+    )
+    assert "## What's Landing" in md
+    assert "The word moves." in md
+    assert "Crystallizes the argument." in md
+    assert "Not all silence is absence." in md
+    top_idx = md.index("## Top Findings")
+    landing_idx = md.index("## What's Landing")
+    verdict_idx = md.index("## Persona Verdicts")
+    assert top_idx < landing_idx < verdict_idx
+
+
+def test_generate_summary_without_strengths(metadata, persona_results, aggregated):
+    md = generate_summary(
+        title="Test Post", metadata=metadata,
+        results=persona_results, aggregated=aggregated,
+        total_personas=5, strengths=None,
+    )
+    assert "## What's Landing" not in md
