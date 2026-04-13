@@ -1,39 +1,60 @@
 # First Misread
 
-**Type**: experiment
-**Started**: 2026-03-22
-**Status**: In Progress
+Stress-test your writing with synthetic reader personas. Find the first place your draft gets misunderstood — before a real reader does.
 
----
+First Misread runs your text through a panel of AI-simulated readers, each with different reading behaviors (skimming, skepticism, emotional response, etc.). It surfaces the exact passage where each persona gets confused, loses interest, or misinterprets your intent.
 
-## What This Is
+This is not a writing assistant or grammar checker. It's a diverse synthetic audience that finds your blind spots.
 
-A behavioral reading simulation for written content. Uses synthetic reader personas — each with configurable knowledge level, skepticism, time pressure, and domain familiarity — to stress-test blog posts, newsletters, and LinkedIn posts. Finds the first place your writing gets misunderstood, before a real reader does.
+## What it does
 
-Not an AI writing assistant. Not grammar checking. A diverse synthetic audience that surfaces blind spots you can't see because you wrote it.
+- **Analyzes text** against multiple reader personas in parallel
+- **Shows where each persona stopped** — the specific passage and why
+- **Optionally generates rewrites** for flagged passages
+- **Available as**: Python CLI, Chrome extension, and [Obsidian plugin](https://github.com/aviralv/obsidian-first-misread)
 
----
+## Personas
 
-## Working v1
+Personas define *how* a simulated reader approaches your text. Each has a reading behavior, focus areas, and conditions that make them stop.
 
-Feed it text (pasted or file) → get structured feedback from multiple reader personas. Output includes: what each persona tested, where they got confused or lost interest, and suggested rewrites for problem sections. Summary file + progressive disclosure files for deeper follow-ups.
+**Core personas** (always run):
 
----
+| Persona | What they test |
+|---------|---------------|
+| The Skimmer | Does the piece survive non-linear, partial reading? |
+| The Busy Reader | Does the opening earn enough interest to keep reading? |
+| The Hook Judge | Does the first line work? |
+| The Skeptic | Are claims supported — logically and with credibility? |
+| The Sensitivity Scanner | Anything that could land badly out of context? |
+| The Voice Editor | Is the voice consistent, authentic, and cringe-free? |
+| The Executor | Can the reader actually do something with this? |
 
-## Current Status
+**Dynamic personas** (selected per-analysis based on content):
 
-**First milestone**: Plan the full system architecture (persona definitions, reading simulation, feedback generation, output format), then build it.
+Literal Reader, Domain Outsider, Emotional Reader, Scope Cop, Mirror Seeker, Visualizer, Arc Reader, Contrarian, First Principles Thinker, Expansionist, Outsider, Troll.
 
-**Progress**: Just started.
+**Custom personas**: Drop a YAML file in `personas/custom/` to define your own.
 
----
+## Usage
 
-## How to Use
+### Python CLI
 
-[Fill in once usable]
+```bash
+uv run first-misread analyze my-post.md
+```
 
----
+### Chrome Extension
+
+Load the `extension/` folder as an unpacked extension. Click the toolbar icon on any page to analyze.
+
+### Obsidian Plugin
+
+See [obsidian-first-misread](https://github.com/aviralv/obsidian-first-misread) for installation via BRAT.
 
 ## Session Notes
 
 See `session-notes/INDEX.md` for detailed progress.
+
+## License
+
+[MIT](LICENSE)
