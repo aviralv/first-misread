@@ -27,11 +27,14 @@ Ran systematic overlap analysis across all 22 personas. Found 3 pairs with same-
 - **12 dynamic**: Arc Reader, Contrarian, Domain Outsider, Emotional Reader, Expansionist, First Principles Thinker, Literal Reader, Mirror Seeker, Outsider, Scope Cop, Troll, Visualizer
 - **19 total** (was 16, added 6, merged 3)
 
-### Both repos updated
-- `first-misread`: YAML files, test assertions, generated extension `personas.js`
-- `obsidian-first-misread`: YAML files, generated `personas.js`, `main.js` rebuilt, version bumped to 0.1.4, tagged for release
+### Both repos updated & pushed
+- `first-misread`: YAML files, test assertions, generated extension `personas.js`, README rewritten, MIT LICENSE added
+- `obsidian-first-misread`: YAML files, generated `personas.js`, `main.js` rebuilt, version bumped to 0.1.4, tagged for release, README updated, MIT LICENSE added
+
+### Housekeeping
+- Closed unsolicited PR #1 on obsidian-first-misread (spam license PR from unknown contributor) — added the LICENSE ourselves instead
+- Committed previously-unstaged verification discipline section in CLAUDE.md
 
 ## Next
-- Push both repos (obsidian tag triggers CI release)
 - Manual smoke test in Chrome with updated personas
 - Selector tuning — with 12 dynamic personas, selection quality becomes more important
