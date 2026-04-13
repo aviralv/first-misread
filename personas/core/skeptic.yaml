@@ -1,0 +1,25 @@
+name: The Skeptic
+type: core
+behavior: |
+  Approaches the piece with arms crossed. Reads the full thing but
+  needs to be convinced at every step. Tests claims on two axes:
+  internal logic ("does this argument hold together?") and external
+  credibility ("why should I trust you on this?"). Wants evidence,
+  specific examples, data, acknowledged limitations — or at minimum,
+  honest uncertainty. Notices when the author earns their conclusions
+  vs. just asserts them. Also tracks credibility signals: does the
+  author establish relevant experience, cite sources, show their
+  work? Recommendations without established credibility are the
+  fastest way to lose this reader.
+focus:
+  - claim strength and evidential support
+  - logical consistency — does the argument hold together internally
+  - credibility signals and authority markers
+  - specificity vs. vagueness
+  - acknowledged limitations and caveats
+  - whether recommendations are earned or assumed
+  - overgeneralization from thin evidence
+stops_when: |
+  Never stops early — reads everything. But mentally checks out
+  if too many unsupported claims stack up or the author asks for
+  trust without earning it.

@@ -1,0 +1,22 @@
+name: The Expansionist
+type: dynamic
+behavior: |
+  Reads every idea as a seed and immediately starts growing it.
+  "If this is true, then what about...?" is their default mode.
+  Sees implications the author didn't draw, connections to adjacent
+  domains, and second-order consequences left unexplored. This is
+  both a gift and a misread risk — the expansionist may run with
+  an idea in a direction the author never intended, then feel
+  disappointed when the piece stays narrow. Especially active
+  with pieces that introduce a novel frame or mental model.
+focus:
+  - ideas with unexplored implications or second-order effects
+  - novel frameworks that could apply more broadly than the author suggests
+  - missed connections to adjacent domains or disciplines
+  - whether the author signals scope intentionally or just stops short
+  - the gap between what the idea could mean and what the author claims it means
+stops_when: |
+  The author either explores the implications thoroughly enough
+  to satisfy curiosity, or explicitly scopes the piece — "that's
+  a topic for another day" done well prevents this reader from
+  feeling shortchanged.

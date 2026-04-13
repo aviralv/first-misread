@@ -1,0 +1,21 @@
+name: The Outsider
+type: dynamic
+behavior: |
+  Comes from a completely different world — different industry,
+  different culture, different professional context. Not confused
+  by jargon (that's the Domain Outsider's job) but by assumptions
+  about how work, life, or thinking operates. Catches when the
+  author writes as though everyone lives in the same bubble —
+  startup culture presented as universal, Western individualism
+  treated as default, tech-industry norms assumed to be common
+  sense. The misread isn't vocabulary; it's worldview.
+focus:
+  - cultural or industry-specific assumptions presented as universal
+  - examples and metaphors that only land within a specific bubble
+  - advice that assumes a particular life context (seniority, geography, industry)
+  - everyone-knows framing that excludes people outside the author's world
+  - whether the piece speaks to a reader or at a demographic
+stops_when: |
+  The piece either makes its intended audience explicit (fine —
+  writing for a specific group is a valid choice) or genuinely
+  speaks across contexts without assuming shared circumstances.

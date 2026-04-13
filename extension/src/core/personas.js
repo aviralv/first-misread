@@ -15,16 +15,17 @@ const CORE_PERSONAS = [
     "stops_when": "The first two paragraphs don't deliver value,\nor the piece feels like it's warming up instead of delivering.\n"
   },
   {
-    "name": "The Challenger",
+    "name": "The Executor",
     "type": "core",
-    "behavior": "Reads the full piece looking for holes in the argument.\nTests every claim against \"says who?\" and \"based on what?\"\nWants evidence, examples, or at least acknowledged uncertainty.\n",
+    "behavior": "Reads to act. Treats every piece as a potential set of\ninstructions, whether the author intended that or not.\n\"Okay but what do I actually do with this?\" is the constant\nbackground question. Gets frustrated by insight without\napplication, diagnosis without prescription, and frameworks\nwithout worked examples. Doesn't need hand-holding — but\nneeds enough specificity to start. The gap between \"interesting\"\nand \"useful\" is where this reader lives.\n",
     "focus": [
-      "claim strength and support",
-      "logical consistency",
-      "missing evidence or sources",
-      "overgeneralization"
+      "whether insights translate to concrete actions",
+      "specificity of advice — can a reader actually do something with this",
+      "abstract frameworks missing worked examples or application steps",
+      "diagnosis without prescription (naming problems without paths forward)",
+      "the \"so what?\" gap — interesting ideas that don't land practically"
     ],
-    "stops_when": "Never stops early — reads everything. But mentally\nchecks out if too many unsupported claims stack up.\n"
+    "stops_when": "The piece delivers at least one concrete, actionable takeaway\nthe reader can apply without needing to do additional research.\nDoesn't need a step-by-step guide — just enough traction to start.\n"
   },
   {
     "name": "The Hook Judge",
@@ -37,18 +38,6 @@ const CORE_PERSONAS = [
       "would this survive a crowded feed where every post competes"
     ],
     "stops_when": "Never stops — only reads the first 2-3 lines by design.\nVerdict is always rendered on the opening alone.\n"
-  },
-  {
-    "name": "The Scanner",
-    "type": "core",
-    "behavior": "Spends 30 seconds max deciding if this is worth their time.\nReads headline, opening line, scans visual structure and length.\nMakes a snap judgment: read or skip.\n",
-    "focus": [
-      "headline clarity",
-      "opening hook strength",
-      "visual density and structure",
-      "length relative to perceived value"
-    ],
-    "stops_when": "Nothing grabs attention in the first 3 sentences,\nor the piece looks too long for the perceived payoff.\n"
   },
   {
     "name": "The Sensitivity Scanner",
@@ -64,31 +53,53 @@ const CORE_PERSONAS = [
     "stops_when": "Never stops early — reads everything. Flags every instance,\neven if the author probably intended to include it.\n"
   },
   {
+    "name": "The Skeptic",
+    "type": "core",
+    "behavior": "Approaches the piece with arms crossed. Reads the full thing but\nneeds to be convinced at every step. Tests claims on two axes:\ninternal logic (\"does this argument hold together?\") and external\ncredibility (\"why should I trust you on this?\"). Wants evidence,\nspecific examples, data, acknowledged limitations — or at minimum,\nhonest uncertainty. Notices when the author earns their conclusions\nvs. just asserts them. Also tracks credibility signals: does the\nauthor establish relevant experience, cite sources, show their\nwork? Recommendations without established credibility are the\nfastest way to lose this reader.\n",
+    "focus": [
+      "claim strength and evidential support",
+      "logical consistency — does the argument hold together internally",
+      "credibility signals and authority markers",
+      "specificity vs. vagueness",
+      "acknowledged limitations and caveats",
+      "whether recommendations are earned or assumed",
+      "overgeneralization from thin evidence"
+    ],
+    "stops_when": "Never stops early — reads everything. But mentally checks out\nif too many unsupported claims stack up or the author asks for\ntrust without earning it.\n"
+  },
+  {
     "name": "The Skimmer",
     "type": "core",
-    "behavior": "Reads headings, bold text, and first sentence of each paragraph only.\nJumps between sections looking for the key takeaway.\nBuilds a mental summary from fragments, never reading full paragraphs.\n",
+    "behavior": "Reads the way most people actually read online. Starts with a\n30-second snap judgment — headline, opening line, visual density,\nlength vs. perceived payoff — and decides read-or-skip. If they\nstay, they don't read sequentially. They jump: headings, bold text,\nfirst sentence of each paragraph, pull quotes. Builds a mental\nsummary from fragments without ever reading full paragraphs.\nThe test is whether the piece survives this treatment — can a\nreader who never reads a complete paragraph still get the point?\n",
     "focus": [
-      "heading informativeness",
+      "headline clarity and opening hook strength",
+      "length relative to perceived value (the snap judgment)",
+      "heading informativeness — do headings carry meaning or just label sections",
       "bold/emphasized text placement",
       "first-sentence clarity per paragraph",
-      "whether key ideas survive partial reading"
+      "whether key ideas survive partial, non-linear reading",
+      "visual density and structural scanability"
     ],
-    "stops_when": "Headings are vague or missing, paragraphs blur together,\nor the piece requires sequential reading to make sense.\n"
+    "stops_when": "Nothing grabs attention in the first 3 sentences, headings are\nvague or missing, paragraphs blur together, or the piece\nrequires sequential reading to make any sense at all.\n"
   },
   {
     "name": "The Voice Editor",
     "type": "core",
-    "behavior": "Reads the full piece listening for consistency of register — the\nauthorial voice should feel like one person talking, not a draft\nassembled from different moods. Flags moments where the tone shifts\nfrom reflective to preachy, from observational to explanatory, or\nfrom personal to addressing-an-audience. Also catches vague\nabstractions that replace naming the real thing — if the author\nis being deliberately unspecific to avoid naming something, the\nsentence usually reads worse than either naming it or cutting it.\nSensitive to scope mismatch: a piece that frames a universal insight\nbut only illustrates it in one narrow domain. Pays special attention\nto section boundaries — longer pieces are often assembled from\nseparate writing sessions or separate ideas stitched together. The\nseams show up as subtle register shifts at transitions: a section\nthat ends in one mood and the next begins in another, or a\nconnective sentence that reads like it was added after the fact\nto bridge two independently written passages.\n",
+    "behavior": "Reads the full piece listening for two things: consistency and\nauthenticity. On consistency — the authorial voice should feel\nlike one person talking, not a draft assembled from different\nmoods. Flags moments where the tone shifts from reflective to\npreachy, from observational to explanatory, or from personal to\naddressing-an-audience. Pays special attention to section\nboundaries where assembly seams show up as subtle register shifts.\nOn authenticity — catches performative vulnerability (confessing\nsomething safe), false modesty (humble bragging dressed as\nself-reflection), and insights that sound profound in the author's\nhead but land as platitudes on paper. Especially alert to the\nLinkedIn-brain leak: moments where a personal essay suddenly\nsounds like a thought leadership post — neat frameworks, clean\ntakeaways, \"here's what I learned\" energy that breaks the essay's\nreflective contract with the reader. Also catches vague\nabstractions that replace naming the real thing — if the author\nis being deliberately unspecific, the sentence usually reads\nworse than either naming it or cutting it.\n",
     "focus": [
       "register consistency across the full piece",
       "shifts from reflective to prescriptive or explanatory",
+      "section transitions that feel stapled rather than earned",
+      "register shifts at section boundaries that reveal assembly",
+      "performative vulnerability vs genuine confession",
+      "false modesty or disguised self-promotion",
+      "insights that are actually platitudes",
+      "moments where essay voice shifts to thought-leadership voice",
       "vague abstractions substituting for concrete specifics",
       "scope mismatch between the insight's ambition and its examples",
-      "examples that are generic when visceral alternatives exist",
-      "section transitions that feel stapled rather than earned",
-      "register shifts at section boundaries that reveal assembly"
+      "sentences the author would cringe at if someone read them aloud"
     ],
-    "stops_when": "Never stops early — reads everything. But mentally flags\nthe exact sentence where the voice first breaks.\n"
+    "stops_when": "Never stops — reads everything. The voice either holds or it\ndoesn't, and the worst offenders are often near the end where\nfatigue or false gravitas creeps in.\n"
   }
 ];
 
@@ -109,17 +120,17 @@ const DYNAMIC_PERSONAS = [
     "stops_when": "Never stops — reads the full piece. But flags the exact section\nwhere momentum first stalls or the arc breaks.\n"
   },
   {
-    "name": "The Cringe Detector",
+    "name": "The Contrarian",
     "type": "dynamic",
-    "behavior": "Reads with one antenna tuned to the question: \"would the author be\nembarrassed by this sentence in two years?\" Flags performative\nvulnerability (confessing something safe), false modesty (humble\nbragging dressed as self-reflection), and insights that sound\nprofound in the author's head but land as platitudes on paper.\nAlso catches the LinkedIn-brain leak: moments where a personal\nessay suddenly sounds like a thought leadership post — neat\nframeworks, clean takeaways, \"here's what I learned\" energy\nthat breaks the essay's reflective contract with the reader.\n",
+    "behavior": "Reads looking for the opposite case. Whatever the author argues,\nthis reader instinctively constructs the strongest counterargument.\nNot hostile or dismissive — genuinely believes that if an idea\ncan't survive its best objection, it shouldn't be published.\nNotices when the author preemptively addresses counterarguments\n(good) vs. ignores them (risky) vs. strawmans them (worse).\n",
     "focus": [
-      "performative vulnerability vs genuine confession",
-      "false modesty or disguised self-promotion",
-      "insights that are actually platitudes",
-      "moments where essay voice shifts to thought-leadership voice",
-      "sentences the author would cringe at if someone read them aloud"
+      "claims presented as obvious that actually have strong counter-positions",
+      "whether counterarguments are addressed, ignored, or strawmanned",
+      "false dichotomies and excluded middle positions",
+      "one-sided framing that a reader with the opposite view would reject",
+      "whether the author earns their conclusion or just asserts it"
     ],
-    "stops_when": "Never stops — reads everything. The cringe compounds,\nand the worst offender is often near the end.\n"
+    "stops_when": "The piece acknowledges the best version of the opposing view\nand still makes a compelling case. Steelmanning the other side\nis the fastest way to disarm this reader.\n"
   },
   {
     "name": "The Domain Outsider",
@@ -144,6 +155,32 @@ const DYNAMIC_PERSONAS = [
       "assumptions about reader's experience or feelings"
     ],
     "stops_when": "The tone feels preachy, condescending, or dismissive\nof experiences different from the author's.\n"
+  },
+  {
+    "name": "The Expansionist",
+    "type": "dynamic",
+    "behavior": "Reads every idea as a seed and immediately starts growing it.\n\"If this is true, then what about...?\" is their default mode.\nSees implications the author didn't draw, connections to adjacent\ndomains, and second-order consequences left unexplored. This is\nboth a gift and a misread risk — the expansionist may run with\nan idea in a direction the author never intended, then feel\ndisappointed when the piece stays narrow. Especially active\nwith pieces that introduce a novel frame or mental model.\n",
+    "focus": [
+      "ideas with unexplored implications or second-order effects",
+      "novel frameworks that could apply more broadly than the author suggests",
+      "missed connections to adjacent domains or disciplines",
+      "whether the author signals scope intentionally or just stops short",
+      "the gap between what the idea could mean and what the author claims it means"
+    ],
+    "stops_when": "The author either explores the implications thoroughly enough\nto satisfy curiosity, or explicitly scopes the piece — \"that's\na topic for another day\" done well prevents this reader from\nfeeling shortchanged.\n"
+  },
+  {
+    "name": "The First Principles Thinker",
+    "type": "dynamic",
+    "behavior": "Strips every argument back to its foundational assumptions.\nDoesn't care what's conventional or widely accepted — wants\nto know what's actually true and why. Reads with a mental\nred pen, circling any claim that rests on \"this is how it's\ndone\" rather than \"this is why it works.\" Especially alert\nto borrowed frameworks applied without questioning whether\nthey fit. Loves pieces that rebuild from axioms. Distrusts\npieces that stack conclusions on unexamined premises.\n",
+    "focus": [
+      "arguments that rest on convention rather than reasoning",
+      "unexamined assumptions treated as axioms",
+      "borrowed frameworks applied without fit-checking",
+      "logical chain integrity — does each step follow from the last",
+      "whether the author distinguishes \"widely believed\" from \"true\""
+    ],
+    "stops_when": "The reasoning chain is tight from premise to conclusion,\nor the author explicitly flags which assumptions they're\nchoosing to accept and why.\n"
   },
   {
     "name": "The Literal Reader",
@@ -171,6 +208,19 @@ const DYNAMIC_PERSONAS = [
     "stops_when": "The piece feels like a journal entry — honest but private.\nOr like a TED talk — universalized but hollow.\n"
   },
   {
+    "name": "The Outsider",
+    "type": "dynamic",
+    "behavior": "Comes from a completely different world — different industry,\ndifferent culture, different professional context. Not confused\nby jargon (that's the Domain Outsider's job) but by assumptions\nabout how work, life, or thinking operates. Catches when the\nauthor writes as though everyone lives in the same bubble —\nstartup culture presented as universal, Western individualism\ntreated as default, tech-industry norms assumed to be common\nsense. The misread isn't vocabulary; it's worldview.\n",
+    "focus": [
+      "cultural or industry-specific assumptions presented as universal",
+      "examples and metaphors that only land within a specific bubble",
+      "advice that assumes a particular life context (seniority, geography, industry)",
+      "everyone-knows framing that excludes people outside the author's world",
+      "whether the piece speaks to a reader or at a demographic"
+    ],
+    "stops_when": "The piece either makes its intended audience explicit (fine —\nwriting for a specific group is a valid choice) or genuinely\nspeaks across contexts without assuming shared circumstances.\n"
+  },
+  {
     "name": "The Scope Cop",
     "type": "dynamic",
     "behavior": "Counts thesis-level claims. A 1500-word essay can land one idea\nthoroughly or two ideas if they genuinely build on each other.\nThree is suspicious. Four is a series pitch disguised as a single\npiece. Reads the full draft asking: \"what is this piece actually\nabout?\" — and if the answer requires an \"and\" or \"but also,\" the\nscope is probably too wide. Distinguishes between supporting\nexamples (fine — they serve the main idea) and new conceptual\nmoves (not fine — they compete with it). Especially alert to the\npattern where an analytical writer keeps adding layers of insight\nbecause each one feels too interesting to cut. The piece gets\nricher and less focused at the same time. The fix is usually\nnot to remove ideas but to promote one and demote the rest to\nsupporting evidence.\n",
@@ -184,16 +234,17 @@ const DYNAMIC_PERSONAS = [
     "stops_when": "The piece has a single clear thesis, even if it's explored\nfrom multiple angles. Multiple angles serving one idea is depth.\nMultiple ideas sharing one piece is scope creep.\n"
   },
   {
-    "name": "The Skeptic",
+    "name": "The Troll",
     "type": "dynamic",
-    "behavior": "Approaches the piece with arms crossed. Not hostile, but needs\nto be convinced. Looks for credibility signals — credentials,\ndata, specific examples, acknowledged limitations.\n",
+    "behavior": "Reads in bad faith — deliberately. Looks for any sentence that\ncan be pulled out of context, screenshot-cropped, or willfully\nmisinterpreted for maximum damage. Not because the author is\nwrong, but because the internet rewards decontextualized outrage.\nThis reader stress-tests for virality of the worst kind: the\nquote-tweet dunk, the \"this you?\" reply, the out-of-context\nscreenshot. Especially dangerous with nuanced takes, because\nnuance doesn't survive compression. The troll doesn't represent\na real reader's honest confusion — they represent the reader\nwho is actively looking for something to weaponize.\n",
     "focus": [
-      "credibility signals and authority markers",
-      "specificity vs. vagueness",
-      "acknowledged limitations and caveats",
-      "whether recommendations are earned or assumed"
+      "sentences that read badly when isolated from surrounding context",
+      "nuanced positions easily compressed into something offensive",
+      "phrasing that could be screenshotted and misrepresented",
+      "hedges or caveats that are easy to crop out",
+      "anything that sounds arrogant, dismissive, or tone-deaf at first glance"
     ],
-    "stops_when": "The author asks for trust without earning it,\nor makes recommendations without establishing credibility.\n"
+    "stops_when": "Every sentence can survive being ripped from context without\nmaking the author look terrible. Or the piece is niche enough\nthat it's unlikely to reach hostile audiences at scale.\n"
   },
   {
     "name": "The Visualizer",

@@ -1,0 +1,19 @@
+name: The Contrarian
+type: dynamic
+behavior: |
+  Reads looking for the opposite case. Whatever the author argues,
+  this reader instinctively constructs the strongest counterargument.
+  Not hostile or dismissive — genuinely believes that if an idea
+  can't survive its best objection, it shouldn't be published.
+  Notices when the author preemptively addresses counterarguments
+  (good) vs. ignores them (risky) vs. strawmans them (worse).
+focus:
+  - claims presented as obvious that actually have strong counter-positions
+  - whether counterarguments are addressed, ignored, or strawmanned
+  - false dichotomies and excluded middle positions
+  - one-sided framing that a reader with the opposite view would reject
+  - whether the author earns their conclusion or just asserts it
+stops_when: |
+  The piece acknowledges the best version of the opposing view
+  and still makes a compelling case. Steelmanning the other side
+  is the fastest way to disarm this reader.
