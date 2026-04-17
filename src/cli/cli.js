@@ -27,7 +27,7 @@ const PROVIDER_DEFAULTS = {
 program
   .name('first-misread')
   .description('Behavioral reading simulation for written content')
-  .version('0.2.0')
+  .version('1.0.0')
   .argument('[input]', 'Path to a text file to analyze')
   .option('-t, --text <text>', 'Paste text directly instead of a file path')
   .option('-p, --provider <provider>', 'LLM provider: anthropic, openai, google, openai-compatible', 'anthropic')
