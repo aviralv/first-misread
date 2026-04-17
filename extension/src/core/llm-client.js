@@ -124,6 +124,38 @@ export class OpenAICompatibleClient extends OpenAIClient {
   }
 }
 
+export class GeminiClient {
+  constructor(apiKey, model, baseUrl) {
+    this.apiKey = apiKey;
+    this.model = model || 'gemini-2.5-flash';
+    this.baseUrl = baseUrl || 'https://generativelanguage.googleapis.com';
+  }
+
+  async call(system, user, maxTokens = 4096) {
+    const url = `${this.baseUrl}/v1beta/models/${this.model}:generateContent`;
+    const result = await httpPost(
+      url,
+      {
+        'x-goog-api-key': this.apiKey,
+      },
+      {
+        contents: [{ parts: [{ text: user }] }],
+        systemInstruction: { parts: [{ text: system }] },
+        generationConfig: { maxOutputTokens: maxTokens },
+      }
+    );
+    if (!result.ok) {
+      console.error(`Gemini API ${result.status}: ${result.text}`);
+      throw new Error(`Gemini API ${result.status}: ${result.text?.slice(0, 200) || 'unknown error'}`);
+    }
+    const text = result.json.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) {
+      throw new Error('Gemini API returned no content');
+    }
+    return parseJSON(text);
+  }
+}
+
 export function createClient(provider, config) {
   switch (provider) {
     case 'anthropic':
@@ -131,10 +163,7 @@ export function createClient(provider, config) {
     case 'openai':
       return new OpenAIClient(config.apiKey, config.model, config.baseUrl);
     case 'google':
-      return new OpenAICompatibleClient(
-        config.baseUrl || 'https://generativelanguage.googleapis.com/v1beta/openai',
-        config.apiKey, config.model,
-      );
+      return new GeminiClient(config.apiKey, config.model, config.baseUrl);
     case 'openai-compatible':
       return new OpenAICompatibleClient(config.baseUrl, config.apiKey, config.model);
     default:

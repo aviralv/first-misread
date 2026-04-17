@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createClient, AnthropicClient, OpenAIClient, OpenAICompatibleClient } from '../src/core/llm-client.js';
+import { createClient, AnthropicClient, OpenAIClient, OpenAICompatibleClient, GeminiClient } from '../src/core/llm-client.js';
 
 describe('AnthropicClient', () => {
   beforeEach(() => { vi.restoreAllMocks(); });
@@ -88,9 +88,9 @@ describe('createClient factory', () => {
     expect(c).toBeInstanceOf(OpenAIClient);
   });
 
-  it('creates OpenAICompatibleClient for google', () => {
+  it('creates GeminiClient for google', () => {
     const c = createClient('google', { apiKey: 'k', model: 'm' });
-    expect(c).toBeInstanceOf(OpenAICompatibleClient);
+    expect(c).toBeInstanceOf(GeminiClient);
   });
 
   it('creates OpenAICompatibleClient for openai-compatible', () => {
