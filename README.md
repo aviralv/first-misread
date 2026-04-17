@@ -10,8 +10,9 @@ This is not a writing assistant or grammar checker. It's a diverse synthetic aud
 
 - **Analyzes text** against multiple reader personas in parallel
 - **Shows where each persona stopped** — the specific passage and why
+- **What's Landing** — identifies load-bearing passages and reader takeaways
 - **Optionally generates rewrites** for flagged passages
-- **Available as**: Python CLI, Chrome extension, and [Obsidian plugin](https://github.com/aviralv/obsidian-first-misread)
+- **Available as**: Node CLI and [Obsidian plugin](https://github.com/aviralv/first-misread) (install via BRAT)
 
 ## Personas
 
@@ -28,28 +29,38 @@ Personas define *how* a simulated reader approaches your text. Each has a readin
 | The Sensitivity Scanner | Anything that could land badly out of context? |
 | The Voice Editor | Is the voice consistent, authentic, and cringe-free? |
 | The Executor | Can the reader actually do something with this? |
+| The Structural Reader | Does the structure serve the content? |
 
 **Dynamic personas** (selected per-analysis based on content):
 
-Literal Reader, Domain Outsider, Emotional Reader, Scope Cop, Mirror Seeker, Visualizer, Arc Reader, Contrarian, First Principles Thinker, Expansionist, Outsider, Troll.
+Literal Reader, Domain Outsider, Emotional Reader, Scope Cop, Mirror Seeker, Visualizer, Arc Reader, Contrarian, First Principles Thinker, Expansionist, Outsider, Troll, The AI Detector.
 
-**Custom personas**: Drop a YAML file in `personas/custom/` to define your own.
+**Custom personas**: Drop a YAML file in `personas/dynamic/` to define your own.
 
 ## Usage
 
-### Python CLI
+### Node CLI
 
 ```bash
-uv run first-misread analyze my-post.md
+node src/cli/cli.js my-post.md --provider anthropic --api-key "$ANTHROPIC_API_KEY"
 ```
 
-### Chrome Extension
-
-Load the `extension/` folder as an unpacked extension. Click the toolbar icon on any page to analyze.
+Supports providers: `anthropic`, `openai`, `google`, `openai-compatible`.
 
 ### Obsidian Plugin
 
-See [obsidian-first-misread](https://github.com/aviralv/obsidian-first-misread) for installation via BRAT.
+Install via [BRAT](https://github.com/TfTHacker/obsidian42-brat) with repo `aviralv/first-misread`.
+
+## Architecture
+
+Single monorepo with shared JS core:
+
+```
+src/core/       # Shared pipeline (LLM clients, analysis, simulation, aggregation)
+src/cli/        # Node CLI entry point
+src/obsidian/   # Obsidian plugin (Preact UI, settings, vault integration)
+personas/       # YAML persona definitions (core + dynamic)
+```
 
 ## Session Notes
 

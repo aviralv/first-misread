@@ -38,3 +38,9 @@ output/
 
 # Claude Code local settings
 .claude/
+
+# Obsidian build output
+main.js
+
+# Generated personas module
+src/core/personas.js
