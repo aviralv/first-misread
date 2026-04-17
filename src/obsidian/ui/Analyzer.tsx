@@ -5,6 +5,7 @@ import { ResultsSummary } from "./ResultsSummary";
 import { RevisionNotes } from "./RevisionNotes";
 import { validateInput, runPipeline } from "../../core/pipeline.js";
 import { createClient, setHttpFunction } from "../../core/llm-client.js";
+import { getCorePersonas, getDynamicPersonas } from "../../core/personas.js";
 import { createVaultHistory, contentHash } from "../../core/history.js";
 import { diffFindings } from "../../core/differ.js";
 import { interpretRevision } from "../../core/interpreter.js";
@@ -216,7 +217,11 @@ export function Analyzer({ app, settings }: Props) {
         }
       };
 
-      const pipelineResult = await runPipeline(client, text, onProgress);
+      const personas = {
+        core: getCorePersonas(),
+        dynamic: getDynamicPersonas(),
+      };
+      const pipelineResult = await runPipeline(client, text, onProgress, personas);
       setResult(pipelineResult);
 
       const contentId = file.path.replace(/\.md$/, "");

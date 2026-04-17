@@ -1,5 +1,4 @@
 import { analyzeContent } from './analyzer.js';
-import { getCorePersonas, getDynamicPersonas } from './personas.js';
 import { selectDynamicPersonas } from './selector.js';
 import { simulateAll } from './simulator.js';
 import { aggregateFindings } from './aggregator.js';
@@ -20,7 +19,7 @@ export function validateInput(text) {
   return text;
 }
 
-export async function runPipeline(client, text, onProgress) {
+export async function runPipeline(client, text, onProgress, personas) {
   const emit = onProgress || (() => {});
 
   text = validateInput(text);
@@ -28,8 +27,7 @@ export async function runPipeline(client, text, onProgress) {
   const metadata = analyzeContent(text);
   emit({ type: 'metadata', metadata });
 
-  const core = getCorePersonas();
-  const dynamic = getDynamicPersonas();
+  const { core, dynamic } = personas;
   const selectedDynamic = await selectDynamicPersonas(client, text, metadata, dynamic);
   const allPersonas = [...core, ...selectedDynamic];
 
