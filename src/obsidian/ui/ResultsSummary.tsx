@@ -6,6 +6,12 @@ interface Strength {
   why: string;
 }
 
+interface Takeaway {
+  passage: string;
+  location: string;
+  takeaway: string;
+}
+
 interface PersonaResult {
   persona: string;
   findings: any[];
@@ -16,10 +22,11 @@ interface Props {
   aggregatedFindings: any[];
   personaResults: PersonaResult[];
   strengths?: Strength[] | null;
+  takeaways?: Takeaway[] | null;
   onHighlight: (passage: string) => void;
 }
 
-export function ResultsSummary({ aggregatedFindings, personaResults, strengths, onHighlight }: Props) {
+export function ResultsSummary({ aggregatedFindings, personaResults, strengths, takeaways, onHighlight }: Props) {
   return (
     <div class="fm-results-summary">
       <h3>
@@ -37,28 +44,59 @@ export function ResultsSummary({ aggregatedFindings, personaResults, strengths, 
         <FindingCard key={i} finding={f} onHighlight={onHighlight} />
       ))}
 
-      {strengths && strengths.length > 0 && (
+      {(strengths && strengths.length > 0 || takeaways && takeaways.length > 0) && (
         <>
           <h3>What's Landing</h3>
-          <div class="fm-strengths">
-            {strengths.map((s: Strength, i: number) => (
-              <div
-                key={i}
-                class="fm-strength-entry"
-                onClick={() => {
-                  const selection = window.getSelection();
-                  if (selection && selection.toString().length > 0) return;
-                  onHighlight(s.passage);
-                }}
-                style={{ cursor: "pointer" }}
-              >
-                <blockquote>"{s.passage}"</blockquote>
-                <p class="fm-strength-meta">
-                  <span class="fm-strength-location">{s.location}</span> — {s.why}
-                </p>
+
+          {strengths && strengths.length > 0 && (
+            <>
+              <h4>Load-Bearing Passages</h4>
+              <div class="fm-strengths">
+                {strengths.map((s: Strength, i: number) => (
+                  <div
+                    key={i}
+                    class="fm-strength-entry"
+                    onClick={() => {
+                      const selection = window.getSelection();
+                      if (selection && selection.toString().length > 0) return;
+                      onHighlight(s.passage);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <blockquote>"{s.passage}"</blockquote>
+                    <p class="fm-strength-meta">
+                      <span class="fm-strength-location">{s.location}</span> — {s.why}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
+
+          {takeaways && takeaways.length > 0 && (
+            <>
+              <h4>Reader Takeaways</h4>
+              <div class="fm-takeaways">
+                {takeaways.map((t: Takeaway, i: number) => (
+                  <div
+                    key={i}
+                    class="fm-takeaway-entry"
+                    onClick={() => {
+                      const selection = window.getSelection();
+                      if (selection && selection.toString().length > 0) return;
+                      onHighlight(t.passage);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <blockquote>"{t.passage}"</blockquote>
+                    <p class="fm-takeaway-meta">
+                      <span class="fm-takeaway-location">{t.location}</span> — {t.takeaway}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </>
       )}
 
