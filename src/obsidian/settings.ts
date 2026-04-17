@@ -1,6 +1,13 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import type FirstMisreadPlugin from "./main";
 
+export const PROVIDER_DEFAULTS: Record<string, { model: string; baseUrl: string }> = {
+  anthropic: { model: "claude-sonnet-4-6", baseUrl: "" },
+  openai: { model: "gpt-4o", baseUrl: "" },
+  google: { model: "gemini-2.5-flash", baseUrl: "" },
+  "openai-compatible": { model: "", baseUrl: "" },
+};
+
 export interface FirstMisreadSettings {
   provider: "anthropic" | "openai" | "google" | "openai-compatible";
   apiKey: string;
@@ -40,12 +47,17 @@ export class FirstMisreadSettingTab extends PluginSettingTab {
           .addOptions({
             anthropic: "Anthropic",
             openai: "OpenAI",
-            google: "Google",
+            google: "Google Gemini",
             "openai-compatible": "OpenAI-compatible",
           })
           .setValue(this.plugin.settings.provider)
           .onChange(async (value) => {
             this.plugin.settings.provider = value as FirstMisreadSettings["provider"];
+            const defaults = PROVIDER_DEFAULTS[value];
+            if (defaults) {
+              this.plugin.settings.model = defaults.model;
+              this.plugin.settings.baseUrl = defaults.baseUrl;
+            }
             await this.plugin.saveSettings();
             this.display();
           })
