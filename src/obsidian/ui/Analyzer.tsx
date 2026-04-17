@@ -143,9 +143,9 @@ export function Analyzer({ app, settings }: Props) {
       new Notice("Open the note to highlight passages.");
       return;
     }
-    const editor = view.editor;
-    if (editor) {
-      if (!highlightInEditor(editor, passage)) {
+    const mode = view.getMode();
+    if (mode === 'source') {
+      if (!highlightInEditor(view.editor, passage)) {
         new Notice("Passage not found — the note may have been edited since analysis.");
       }
     } else {
