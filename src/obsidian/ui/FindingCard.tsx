@@ -21,6 +21,8 @@ export function FindingCard({ finding, onHighlight }: Props) {
     <div
       class={`fm-finding-card fm-severity-${finding.severity}`}
       onClick={() => {
+        const selection = window.getSelection();
+        if (selection && selection.toString().length > 0) return;
         setExpanded(!expanded);
         onHighlight(finding.passage);
       }}

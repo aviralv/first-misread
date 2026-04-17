@@ -45,7 +45,11 @@ export function ResultsSummary({ aggregatedFindings, personaResults, strengths, 
               <div
                 key={i}
                 class="fm-strength-entry"
-                onClick={() => onHighlight(s.passage)}
+                onClick={() => {
+                  const selection = window.getSelection();
+                  if (selection && selection.toString().length > 0) return;
+                  onHighlight(s.passage);
+                }}
                 style={{ cursor: "pointer" }}
               >
                 <blockquote>"{s.passage}"</blockquote>
