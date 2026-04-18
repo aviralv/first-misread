@@ -18,14 +18,8 @@
 
 ## Session Continuity
 
-Start every session: check `session-notes/INDEX.md` for where things stand.
-End every session: create a session note with outcomes and next steps.
-
-**Before any git commit**: update or create the session note for this session,
-and add/update the entry in `session-notes/INDEX.md`. No commits without
-session notes being current.
-
-Session note format: `session-notes/YYYY-MM-DD-theme.md`
+Session notes live in the Product Kitchen repo (private), not here.
+Location: `the-product-kitchen/session-notes/first-misread-*.md`
 
 ---
 

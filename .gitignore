@@ -30,6 +30,12 @@ build/
 # Generated reports
 output/
 
+# Session notes (live in product-kitchen, not this public repo)
+session-notes/
+
+# Internal design docs (specs, plans — kept locally, not published)
+docs/
+
 # Worktrees
 .worktrees/
 

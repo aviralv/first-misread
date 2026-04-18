@@ -34,7 +34,7 @@ program
   .option('-k, --api-key <key>', 'API key (overrides env var)')
   .option('-m, --model <model>', 'Model name (overrides provider default)')
   .option('--base-url <url>', 'Override API base URL')
-  .option('--no-rewrites', 'Skip rewrite suggestions')
+  .option('--no-suggestions', 'Skip suggested alternatives for flagged passages')
   .option('--revision-of <ref>', 'Link to a previous run by slug or run ID')
   .option('--no-history', 'Skip history tracking')
   .option('--history <slug>', 'Show chain history for a slug')

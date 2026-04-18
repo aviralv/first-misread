@@ -1,10 +1,40 @@
 {
   "name": "first-misread",
   "version": "1.0.0",
+  "description": "Stress-test your writing with synthetic reader personas. Find the first place your draft gets misunderstood.",
   "type": "module",
   "bin": {
     "first-misread": "src/cli/cli.js"
   },
+  "keywords": [
+    "writing",
+    "editing",
+    "feedback",
+    "ai",
+    "llm",
+    "personas",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aviralv/first-misread.git"
+  },
+  "homepage": "https://github.com/aviralv/first-misread",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "src/core/llm-client.js",
+    "src/core/pipeline.js",
+    "src/core/analyzer.js",
+    "src/core/selector.js",
+    "src/core/simulator.js",
+    "src/core/aggregator.js",
+    "src/core/strengths.js",
+    "src/cli/",
+    "personas/"
+  ],
   "scripts": {
     "prebuild": "node scripts/convert-personas.js",
     "predev": "node scripts/convert-personas.js",
