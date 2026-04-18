@@ -7,11 +7,17 @@ import { identifyStrengths } from './strengths.js';
 const MIN_WORDS = 50;
 const MAX_WORDS = 2500;
 
+export function stripFrontmatter(text) {
+  const match = text.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/);
+  return match ? text.slice(match[0].length) : text;
+}
+
 export function stripObsidianComments(text) {
   return text.replace(/%%[\s\S]*?%%/g, '');
 }
 
 export function validateInput(text) {
+  text = stripFrontmatter(text);
   text = stripObsidianComments(text).trim();
   const wordCount = text.split(/\s+/).filter(Boolean).length;
   if (wordCount < MIN_WORDS) {

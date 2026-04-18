@@ -3,7 +3,7 @@ import { MarkdownView, Notice, requestUrl, type App, type Editor, type EditorPos
 import { PersonaProgress } from "./PersonaProgress";
 import { ResultsSummary } from "./ResultsSummary";
 import { RevisionNotes } from "./RevisionNotes";
-import { validateInput, runPipeline } from "../../core/pipeline.js";
+import { validateInput, runPipeline, stripFrontmatter } from "../../core/pipeline.js";
 import { createClient, setHttpFunction } from "../../core/llm-client.js";
 import { getCorePersonas, getDynamicPersonas } from "../../core/personas.js";
 import { createVaultHistory, contentHash } from "../../core/history.js";
@@ -24,11 +24,6 @@ interface PersonaState {
 interface Props {
   app: App;
   settings: FirstMisreadSettings;
-}
-
-function stripFrontmatter(text: string): string {
-  const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
-  return match ? text.slice(match[0].length) : text;
 }
 
 function highlightInEditor(editor: Editor, passage: string): boolean {
