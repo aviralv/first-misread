@@ -11,9 +11,22 @@ interface Persona {
   findingCount: number;
 }
 
-export function PersonaProgress({ personas }: { personas: Persona[] }) {
+type Phase = "personas" | "strengths" | "complete";
+
+interface Props {
+  personas: Persona[];
+  phase: Phase;
+}
+
+export function PersonaProgress({ personas, phase }: Props) {
   return (
     <div class="fm-persona-progress">
+      {phase === "personas" && (
+        <p class="fm-phase-label">Reading with {personas.length} personas...</p>
+      )}
+      {phase === "strengths" && (
+        <p class="fm-phase-label">Identifying strengths...</p>
+      )}
       {personas.map((p) => (
         <div class="fm-persona-row" key={p.name}>
           <span class={`fm-status-icon fm-status-${p.status}`}>

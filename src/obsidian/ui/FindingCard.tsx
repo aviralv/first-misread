@@ -21,10 +21,7 @@ export function FindingCard({ finding, onHighlight }: Props) {
     <div class={`fm-finding-card fm-severity-${finding.severity}`}>
       <div
         class="fm-finding-header"
-        onClick={() => {
-          setExpanded(!expanded);
-          onHighlight(finding.passage);
-        }}
+        onClick={() => setExpanded(!expanded)}
       >
         <span class={`fm-severity-badge fm-severity-${finding.severity}`}>
           {finding.severity}
@@ -39,7 +36,13 @@ export function FindingCard({ finding, onHighlight }: Props) {
       </div>
       {expanded && (
         <div class="fm-finding-detail">
-          <blockquote class="fm-passage">"{finding.passage}"</blockquote>
+          <blockquote
+            class="fm-passage fm-passage-link"
+            onClick={() => onHighlight(finding.passage)}
+          >
+            <span class="fm-locate-icon">{"\uD83D\uDD0D"}</span>
+            "{finding.passage}"
+          </blockquote>
           {finding.descriptions.map((d) => (
             <p key={d.persona}>
               <strong>{d.persona}:</strong> {d.what_happened}
