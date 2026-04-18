@@ -185,6 +185,7 @@ export function Analyzer({ app, settings }: Props) {
         apiKey: settings.apiKey,
         model: settings.model,
         baseUrl: settings.baseUrl || undefined,
+        browserMode: true,
       });
 
       const onProgress = (msg: any) => {
@@ -217,11 +218,11 @@ export function Analyzer({ app, settings }: Props) {
         }
       };
 
-      const personas = {
+      const personaConfig = {
         core: getCorePersonas(),
         dynamic: getDynamicPersonas(),
       };
-      const pipelineResult = await runPipeline(client, text, onProgress, personas);
+      const pipelineResult = await runPipeline(client, text, onProgress, personaConfig);
       setResult(pipelineResult);
 
       const contentId = file.path.replace(/\.md$/, "");
@@ -233,27 +234,17 @@ export function Analyzer({ app, settings }: Props) {
       const chain = await history.loadChain(contentId);
       const parentHasFindings = chain.length > 0 &&
         chain[chain.length - 1].findings?.length > 0;
-      let parentInput: string | null = null;
-
       if (parentHasFindings) {
-        const parentRunId = chain[chain.length - 1].run_id;
-        parentInput = await history.loadInput(contentId, parentRunId);
-
         const findingDiffs = diffFindings(
           pipelineResult.aggregatedFindings,
           chain
         );
         setDiffs(findingDiffs);
 
-        let textDiff = "";
-        if (parentInput) {
-          textDiff = `--- previous\n+++ current\n(text changed)`;
-        }
-
         const notes = await interpretRevision(
           client,
           findingDiffs,
-          textDiff,
+          "",
           chain
         );
         setRevisionNotes(notes);

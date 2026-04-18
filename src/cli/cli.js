@@ -35,7 +35,6 @@ program
   .option('-m, --model <model>', 'Model name (overrides provider default)')
   .option('--base-url <url>', 'Override API base URL')
   .option('--no-suggestions', 'Skip suggested alternatives for flagged passages')
-  .option('--revision-of <ref>', 'Link to a previous run by slug or run ID')
   .option('--no-history', 'Skip history tracking')
   .option('--show-history <slug>', 'Show chain history for a slug')
   .option('-v, --verbose', 'Enable debug logging')
@@ -77,7 +76,8 @@ program
     const providerDefaults = PROVIDER_DEFAULTS[opts.provider] || {};
     const apiKey = opts.apiKey || process.env[providerDefaults.envKey] || '';
     if (!apiKey) {
-      console.error(`Error: No API key. Set ${providerDefaults.envKey} or use --api-key`);
+      const envHint = providerDefaults.envKey ? `Set ${providerDefaults.envKey} or use` : 'Use';
+      console.error(`Error: No API key. ${envHint} --api-key`);
       process.exit(1);
     }
 
@@ -117,10 +117,8 @@ program
       content, model, null,
     );
 
-    if (opts.history !== false) {
-      const history = createFsHistory(OUTPUT_DIR);
-      history.saveRun(slug, record, content);
-    }
+    const history = createFsHistory(OUTPUT_DIR);
+    history.saveRun(slug, record, content, opts.history === false);
 
     const summaryPath = join(outputDir, 'summary.md');
     console.log(readFileSync(summaryPath, 'utf8'));

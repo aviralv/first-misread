@@ -131,7 +131,6 @@ Options:
   -m, --model <model>        Model name (overrides provider default)
   --base-url <url>           Override API base URL
   --no-suggestions           Skip suggested alternatives for flagged passages
-  --revision-of <ref>        Link to a previous run by slug or run ID
   --no-history               Skip history tracking
   --show-history <slug>      Show chain history for a slug
   -v, --verbose              Enable debug logging

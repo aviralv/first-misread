@@ -65,7 +65,14 @@ export function createFsHistory(baseDir) {
       return null;
     },
 
-    saveRun(slug, record, inputText) {
+    saveRun(slug, record, inputText, skipChain = false) {
+      const runDir = join(baseDir, record.run_id);
+      mkdirSync(runDir, { recursive: true });
+      writeFileSync(join(runDir, 'run.json'), JSON.stringify(record, null, 2));
+      writeFileSync(join(runDir, 'input.md'), inputText);
+
+      if (skipChain) return;
+
       const history = loadHistory();
       const chainKey = record.parent_run_id
         ? Object.entries(history.chains).find(([, ids]) => ids.includes(record.parent_run_id))?.[0] || slug
@@ -80,10 +87,6 @@ export function createFsHistory(baseDir) {
         parent_run_id: record.parent_run_id,
       };
 
-      const runDir = join(baseDir, record.run_id);
-      mkdirSync(runDir, { recursive: true });
-      writeFileSync(join(runDir, 'run.json'), JSON.stringify(record, null, 2));
-      writeFileSync(join(runDir, 'input.md'), inputText);
       saveHistory(history);
     },
 

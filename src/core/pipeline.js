@@ -9,7 +9,7 @@ const MAX_WORDS = 2500;
 
 export function validateInput(text) {
   text = text.trim();
-  const wordCount = text.split(/\s+/).length;
+  const wordCount = text.split(/\s+/).filter(Boolean).length;
   if (wordCount < MIN_WORDS) {
     throw new Error(`Input too short: ${wordCount} words (minimum ${MIN_WORDS})`);
   }

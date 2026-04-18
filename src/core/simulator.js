@@ -52,23 +52,56 @@ ${text}
   return result;
 }
 
+const MAX_CONCURRENT = 4;
+
 export async function simulateAll(client, personas, text, metadata, onProgress) {
-  const promises = personas.map(async (persona) => {
-    if (onProgress) onProgress({ type: 'persona-started', persona: persona.name });
-    const result = await simulatePersona(client, persona, text, metadata);
-    if (onProgress && result) {
-      onProgress({ type: 'persona-done', persona: persona.name, findingCount: result.findings.length });
-    }
-    return result;
-  });
-
-  const settled = await Promise.allSettled(promises);
-
   const results = [];
-  for (const outcome of settled) {
-    if (outcome.status === 'fulfilled' && outcome.value) {
-      results.push(outcome.value);
+  let running = 0;
+  let resolveSlot = null;
+
+  function waitForSlot() {
+    if (running < MAX_CONCURRENT) return Promise.resolve();
+    return new Promise(r => { resolveSlot = r; });
+  }
+
+  function releaseSlot() {
+    running--;
+    if (resolveSlot) {
+      const r = resolveSlot;
+      resolveSlot = null;
+      r();
     }
   }
+
+  const tasks = personas.map(async (persona) => {
+    await waitForSlot();
+    running++;
+    if (onProgress) onProgress({ type: 'persona-started', persona: persona.name });
+    try {
+      const result = await simulatePersona(client, persona, text, metadata);
+      if (onProgress) {
+        onProgress({
+          type: 'persona-done',
+          persona: persona.name,
+          findingCount: result ? result.findings.length : 0,
+          failed: !result,
+        });
+      }
+      if (result) results.push(result);
+    } catch {
+      if (onProgress) {
+        onProgress({
+          type: 'persona-done',
+          persona: persona.name,
+          findingCount: 0,
+          failed: true,
+        });
+      }
+    } finally {
+      releaseSlot();
+    }
+  });
+
+  await Promise.all(tasks);
   return results;
 }

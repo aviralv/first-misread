@@ -85,20 +85,24 @@ async function httpPost(url, headers, body) {
 }
 
 export class AnthropicClient {
-  constructor(apiKey, model, baseUrl) {
+  constructor(apiKey, model, baseUrl, { browserMode = false } = {}) {
     this.apiKey = apiKey;
     this.model = model || 'claude-sonnet-4-6';
     this.baseUrl = baseUrl || 'https://api.anthropic.com';
+    this.browserMode = browserMode;
   }
 
   async call(system, user, maxTokens = 4096) {
+    const headers = {
+      'x-api-key': this.apiKey,
+      'anthropic-version': '2023-06-01',
+    };
+    if (this.browserMode) {
+      headers['anthropic-dangerous-direct-browser-access'] = 'true';
+    }
     const result = await httpPost(
       `${this.baseUrl}/v1/messages`,
-      {
-        'x-api-key': this.apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
+      headers,
       {
         model: this.model,
         max_tokens: maxTokens,
@@ -185,7 +189,7 @@ export class GeminiClient {
 export function createClient(provider, config) {
   switch (provider) {
     case 'anthropic':
-      return new AnthropicClient(config.apiKey, config.model, config.baseUrl);
+      return new AnthropicClient(config.apiKey, config.model, config.baseUrl, { browserMode: config.browserMode });
     case 'openai':
       return new OpenAIClient(config.apiKey, config.model, config.baseUrl);
     case 'google':

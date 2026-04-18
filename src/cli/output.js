@@ -134,8 +134,5 @@ export function writeOutput(baseDir, slug, title, metadata, results, aggregated,
     })),
   };
 
-  writeFileSync(join(outputDir, 'run.json'), JSON.stringify(record, null, 2));
-  writeFileSync(join(outputDir, 'input.md'), inputText);
-
   return { outputDir, record };
 }
