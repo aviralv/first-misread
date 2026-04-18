@@ -7,8 +7,12 @@ import { identifyStrengths } from './strengths.js';
 const MIN_WORDS = 50;
 const MAX_WORDS = 2500;
 
+export function stripObsidianComments(text) {
+  return text.replace(/%%[\s\S]*?%%/g, '');
+}
+
 export function validateInput(text) {
-  text = text.trim();
+  text = stripObsidianComments(text).trim();
   const wordCount = text.split(/\s+/).filter(Boolean).length;
   if (wordCount < MIN_WORDS) {
     throw new Error(`Input too short: ${wordCount} words (minimum ${MIN_WORDS})`);
