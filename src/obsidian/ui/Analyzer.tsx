@@ -138,12 +138,27 @@ export function Analyzer({ app, settings }: Props) {
     return () => app.workspace.offref(ref);
   }, [app]);
 
+  const findNoteView = (): MarkdownView | null => {
+    const targetPath = analyzedPathRef.current;
+    if (!targetPath) return null;
+    let found: MarkdownView | null = null;
+    app.workspace.iterateAllLeaves((leaf) => {
+      if (found) return;
+      const view = leaf.view;
+      if (view instanceof MarkdownView && view.file?.path === targetPath) {
+        found = view;
+      }
+    });
+    return found;
+  };
+
   const highlightPassage = (passage: string) => {
-    const view = app.workspace.getActiveViewOfType(MarkdownView);
+    const view = findNoteView();
     if (!view) {
       new Notice("Open the note to highlight passages.");
       return;
     }
+    app.workspace.revealLeaf(view.leaf);
     const mode = view.getMode();
     if (mode === 'source') {
       if (!highlightInEditor(view.editor, passage)) {
@@ -320,6 +335,17 @@ export function Analyzer({ app, settings }: Props) {
           />
           <button class="fm-btn-secondary" onClick={() => { setStatus("idle"); analyzedPathRef.current = null; }}>
             Analyze Again
+          </button>
+          <button class="fm-btn-secondary fm-btn-danger" onClick={async () => {
+            if (!analyzedPathRef.current) return;
+            const contentId = analyzedPathRef.current.replace(/\.md$/, "");
+            const history = createVaultHistory(app.vault.adapter, settings.resultsFolder);
+            await history.clearHistory(contentId);
+            setDiffs([]);
+            setRevisionNotes(null);
+            new Notice("History cleared for this note.");
+          }}>
+            Reset History
           </button>
         </div>
       )}

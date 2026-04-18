@@ -95,5 +95,15 @@ export function createVaultHistory(adapter, basePath) {
       }
       return null;
     },
+
+    async clearHistory(contentId) {
+      const index = await loadIndex(contentId);
+      for (const runId of index.runs) {
+        try { await adapter.remove(runPath(contentId, runId)); } catch {}
+        try { await adapter.remove(inputPath(contentId, runId)); } catch {}
+      }
+      try { await adapter.remove(indexPath(contentId)); } catch {}
+      try { await adapter.rmdir(`${basePath}/${contentId}`); } catch {}
+    },
   };
 }

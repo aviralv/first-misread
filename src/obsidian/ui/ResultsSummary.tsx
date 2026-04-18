@@ -53,20 +53,15 @@ export function ResultsSummary({ aggregatedFindings, personaResults, strengths, 
               <h4>Load-Bearing Passages</h4>
               <div class="fm-strengths">
                 {strengths.map((s: Strength, i: number) => (
-                  <div
-                    key={i}
-                    class="fm-strength-entry"
-                    onClick={() => {
-                      const selection = window.getSelection();
-                      if (selection && selection.toString().length > 0) return;
-                      onHighlight(s.passage);
-                    }}
-                    style={{ cursor: "pointer" }}
-                  >
+                  <div key={i} class="fm-strength-entry">
+                    <div
+                      class="fm-entry-highlight-link"
+                      onClick={() => onHighlight(s.passage)}
+                    >
+                      {s.location} — show in note
+                    </div>
                     <blockquote>"{s.passage}"</blockquote>
-                    <p class="fm-strength-meta">
-                      <span class="fm-strength-location">{s.location}</span> — {s.why}
-                    </p>
+                    <p class="fm-strength-meta">{s.why}</p>
                   </div>
                 ))}
               </div>
@@ -78,20 +73,15 @@ export function ResultsSummary({ aggregatedFindings, personaResults, strengths, 
               <h4>Reader Takeaways</h4>
               <div class="fm-takeaways">
                 {takeaways.map((t: Takeaway, i: number) => (
-                  <div
-                    key={i}
-                    class="fm-takeaway-entry"
-                    onClick={() => {
-                      const selection = window.getSelection();
-                      if (selection && selection.toString().length > 0) return;
-                      onHighlight(t.passage);
-                    }}
-                    style={{ cursor: "pointer" }}
-                  >
+                  <div key={i} class="fm-takeaway-entry">
+                    <div
+                      class="fm-entry-highlight-link"
+                      onClick={() => onHighlight(t.passage)}
+                    >
+                      {t.location} — show in note
+                    </div>
                     <blockquote>"{t.passage}"</blockquote>
-                    <p class="fm-takeaway-meta">
-                      <span class="fm-takeaway-location">{t.location}</span> — {t.takeaway}
-                    </p>
+                    <p class="fm-takeaway-meta">{t.takeaway}</p>
                   </div>
                 ))}
               </div>

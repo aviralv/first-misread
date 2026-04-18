@@ -18,22 +18,21 @@ export function FindingCard({ finding, onHighlight }: Props) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div
-      class={`fm-finding-card fm-severity-${finding.severity}`}
-      onClick={() => {
-        const selection = window.getSelection();
-        if (selection && selection.toString().length > 0) return;
-        setExpanded(!expanded);
-        onHighlight(finding.passage);
-      }}
-    >
-      <div class="fm-finding-header">
+    <div class={`fm-finding-card fm-severity-${finding.severity}`}>
+      <div
+        class="fm-finding-header"
+        onClick={() => {
+          setExpanded(!expanded);
+          onHighlight(finding.passage);
+        }}
+      >
         <span class={`fm-severity-badge fm-severity-${finding.severity}`}>
           {finding.severity}
         </span>
         <span class="fm-finding-desc">
           {finding.descriptions[0]?.what_happened}
         </span>
+        <span class="fm-expand-icon">{expanded ? "\u25B4" : "\u25BE"}</span>
       </div>
       <div class="fm-finding-meta">
         {signalStrength(finding.personas)} &middot; {finding.location}

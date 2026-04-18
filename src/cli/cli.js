@@ -34,7 +34,6 @@ program
   .option('-k, --api-key <key>', 'API key (overrides env var)')
   .option('-m, --model <model>', 'Model name (overrides provider default)')
   .option('--base-url <url>', 'Override API base URL')
-  .option('--no-suggestions', 'Skip suggested alternatives for flagged passages')
   .option('--no-history', 'Skip history tracking')
   .option('--show-history <slug>', 'Show chain history for a slug')
   .option('-v, --verbose', 'Enable debug logging')

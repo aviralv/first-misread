@@ -64,7 +64,6 @@
   border-radius: 6px;
   padding: 10px 12px;
   margin: 8px 0;
-  cursor: pointer;
   transition: background 0.1s;
 }
 
@@ -76,6 +75,13 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  cursor: pointer;
+}
+
+.fm-expand-icon {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 12px;
 }
 
 .fm-severity-badge {
@@ -173,9 +179,27 @@
 /* Revision notes */
 .fm-revision-notes {
   margin-bottom: 16px;
-  padding: 12px;
+  padding: 8px 12px;
   background: var(--background-secondary);
   border-radius: 6px;
+}
+
+.fm-revision-header {
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.fm-revision-header h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.fm-revision-body {
+  margin-top: 8px;
 }
 
 .fm-diff-counts {
@@ -260,6 +284,16 @@ mark.fm-passage-highlight {
   background: var(--background-modifier-hover);
 }
 
+.fm-btn-danger {
+  color: var(--color-red);
+  border-color: var(--color-red);
+  margin-left: 8px;
+}
+
+.fm-btn-danger:hover {
+  background: color-mix(in srgb, var(--color-red) 10%, transparent);
+}
+
 .fm-takeaway-entry {
   padding: 8px 0;
   border-bottom: 1px solid var(--background-modifier-border);
@@ -277,4 +311,30 @@ mark.fm-passage-highlight {
 
 .fm-takeaway-location {
   font-weight: 600;
+}
+
+.fm-entry-highlight-link {
+  font-size: 11px;
+  color: var(--interactive-accent);
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+
+.fm-entry-highlight-link:hover {
+  text-decoration: underline;
+}
+
+.fm-strength-entry {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.fm-strength-entry:last-child {
+  border-bottom: none;
+}
+
+.fm-strength-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
 }

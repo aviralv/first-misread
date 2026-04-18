@@ -130,7 +130,6 @@ Options:
   -k, --api-key <key>        API key (overrides env var)
   -m, --model <model>        Model name (overrides provider default)
   --base-url <url>           Override API base URL
-  --no-suggestions           Skip suggested alternatives for flagged passages
   --no-history               Skip history tracking
   --show-history <slug>      Show chain history for a slug
   -v, --verbose              Enable debug logging

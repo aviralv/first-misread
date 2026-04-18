@@ -1,3 +1,5 @@
+import { useState } from "preact/hooks";
+
 interface RevisionNotesData {
   what_landed: string[];
   what_persists: string[];
@@ -18,6 +20,8 @@ interface Props {
 }
 
 export function RevisionNotes({ notes, diffs }: Props) {
+  const [expanded, setExpanded] = useState(false);
+
   const counts = {
     new: diffs.filter((d) => d.status === "new").length,
     persists: diffs.filter((d) => d.status === "persists").length,
@@ -27,71 +31,78 @@ export function RevisionNotes({ notes, diffs }: Props) {
 
   return (
     <div class="fm-revision-notes">
-      <h3>Changes from Previous Run</h3>
-
-      <div class="fm-diff-counts">
-        {counts.resolved > 0 && (
-          <span class="fm-diff-resolved">
-            {counts.resolved} resolved
-          </span>
-        )}
-        {counts.new > 0 && (
-          <span class="fm-diff-new">{counts.new} new</span>
-        )}
-        {counts.persists > 0 && (
-          <span class="fm-diff-persists">
-            {counts.persists} persists
-          </span>
-        )}
-        {counts.regressed > 0 && (
-          <span class="fm-diff-regressed">
-            {counts.regressed} regressed
-          </span>
-        )}
+      <div class="fm-revision-header" onClick={() => setExpanded(!expanded)}>
+        <h4>
+          {expanded ? "\u25B4" : "\u25BE"} Changes from Previous Run
+        </h4>
+        <div class="fm-diff-counts">
+          {counts.resolved > 0 && (
+            <span class="fm-diff-resolved">
+              {counts.resolved} resolved
+            </span>
+          )}
+          {counts.new > 0 && (
+            <span class="fm-diff-new">{counts.new} new</span>
+          )}
+          {counts.persists > 0 && (
+            <span class="fm-diff-persists">
+              {counts.persists} persists
+            </span>
+          )}
+          {counts.regressed > 0 && (
+            <span class="fm-diff-regressed">
+              {counts.regressed} regressed
+            </span>
+          )}
+        </div>
       </div>
 
-      {notes.what_landed.length > 0 && (
-        <div class="fm-section">
-          <h4>What Landed</h4>
-          <ul>
-            {notes.what_landed.map((item, i) => (
-              <li key={i}>{item}</li>
-            ))}
-          </ul>
+      {expanded && (
+        <div class="fm-revision-body">
+          {notes.what_landed.length > 0 && (
+            <div class="fm-section">
+              <h4>What Landed</h4>
+              <ul>
+                {notes.what_landed.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {notes.what_persists.length > 0 && (
+            <div class="fm-section">
+              <h4>What Persists</h4>
+              <ul>
+                {notes.what_persists.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {notes.what_regressed.length > 0 && (
+            <div class="fm-section">
+              <h4>What Regressed</h4>
+              <ul>
+                {notes.what_regressed.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div class="fm-section">
+            <h4>Revision Pattern</h4>
+            <p>{notes.revision_pattern}</p>
+          </div>
+
+          <div class="fm-section">
+            <h4>Suggestion</h4>
+            <p>{notes.suggestion}</p>
+          </div>
         </div>
       )}
-
-      {notes.what_persists.length > 0 && (
-        <div class="fm-section">
-          <h4>What Persists</h4>
-          <ul>
-            {notes.what_persists.map((item, i) => (
-              <li key={i}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {notes.what_regressed.length > 0 && (
-        <div class="fm-section">
-          <h4>What Regressed</h4>
-          <ul>
-            {notes.what_regressed.map((item, i) => (
-              <li key={i}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      <div class="fm-section">
-        <h4>Revision Pattern</h4>
-        <p>{notes.revision_pattern}</p>
-      </div>
-
-      <div class="fm-section">
-        <h4>Suggestion</h4>
-        <p>{notes.suggestion}</p>
-      </div>
     </div>
   );
 }

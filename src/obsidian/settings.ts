@@ -14,7 +14,7 @@ export interface FirstMisreadSettings {
   model: string;
   baseUrl: string;
   resultsFolder: string;
-  includeRewrites: boolean;
+  includeSuggestions: boolean;
 }
 
 export const DEFAULT_SETTINGS: FirstMisreadSettings = {
@@ -23,7 +23,7 @@ export const DEFAULT_SETTINGS: FirstMisreadSettings = {
   model: "claude-sonnet-4-6",
   baseUrl: "",
   resultsFolder: ".first-misread",
-  includeRewrites: false,
+  includeSuggestions: false,
 };
 
 export class FirstMisreadSettingTab extends PluginSettingTab {
@@ -115,13 +115,13 @@ export class FirstMisreadSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Include rewrites")
-      .setDesc("Generate rewrite suggestions for flagged passages")
+      .setName("Include suggestions")
+      .setDesc("Generate alternative phrasing for flagged passages (coming soon)")
       .addToggle((toggle) =>
         toggle
-          .setValue(this.plugin.settings.includeRewrites)
+          .setValue(this.plugin.settings.includeSuggestions)
           .onChange(async (value) => {
-            this.plugin.settings.includeRewrites = value;
+            this.plugin.settings.includeSuggestions = value;
             await this.plugin.saveSettings();
           })
       );
