@@ -133,7 +133,7 @@ Options:
   --no-suggestions           Skip suggested alternatives for flagged passages
   --revision-of <ref>        Link to a previous run by slug or run ID
   --no-history               Skip history tracking
-  --history <slug>           Show chain history for a slug
+  --show-history <slug>      Show chain history for a slug
   -v, --verbose              Enable debug logging
   -V, --version              Output the version number
   -h, --help                 Display help

@@ -27,7 +27,7 @@ const PROVIDER_DEFAULTS = {
 program
   .name('first-misread')
   .description('Behavioral reading simulation for written content')
-  .version('1.0.0')
+  .version('1.0.1')
   .argument('[input]', 'Path to a text file to analyze')
   .option('-t, --text <text>', 'Paste text directly instead of a file path')
   .option('-p, --provider <provider>', 'LLM provider: anthropic, openai, google, openai-compatible', 'anthropic')
@@ -37,19 +37,19 @@ program
   .option('--no-suggestions', 'Skip suggested alternatives for flagged passages')
   .option('--revision-of <ref>', 'Link to a previous run by slug or run ID')
   .option('--no-history', 'Skip history tracking')
-  .option('--history <slug>', 'Show chain history for a slug')
+  .option('--show-history <slug>', 'Show chain history for a slug')
   .option('-v, --verbose', 'Enable debug logging')
   .action(async (input, opts) => {
-    if (opts.history) {
+    if (opts.showHistory) {
       const history = createFsHistory(OUTPUT_DIR);
       const chains = history.getChains();
       const runs = history.getRuns();
-      if (!(opts.history in chains)) {
-        console.error(`No chain found for: ${opts.history}`);
+      if (!(opts.showHistory in chains)) {
+        console.error(`No chain found for: ${opts.showHistory}`);
         process.exit(1);
       }
-      const runIds = chains[opts.history];
-      console.log(`Chain: ${opts.history}`);
+      const runIds = chains[opts.showHistory];
+      console.log(`Chain: ${opts.showHistory}`);
       console.log(`Runs: ${runIds.length} runs\n`);
       runIds.forEach((runId, i) => {
         const info = runs[runId] || {};
@@ -117,7 +117,7 @@ program
       content, model, null,
     );
 
-    if (!opts.noHistory) {
+    if (opts.history !== false) {
       const history = createFsHistory(OUTPUT_DIR);
       history.saveRun(slug, record, content);
     }
