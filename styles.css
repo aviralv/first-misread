@@ -338,3 +338,167 @@ mark.fm-passage-highlight {
   color: var(--text-muted);
   margin-top: 4px;
 }
+
+/* Summary bar */
+.fm-summary-bar {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+}
+
+.fm-severity-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.fm-severity-count {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.fm-severity-count-high {
+  background: color-mix(in srgb, var(--color-red) 20%, transparent);
+  color: var(--color-red);
+}
+
+.fm-severity-count-medium {
+  background: color-mix(in srgb, var(--color-yellow) 20%, transparent);
+  color: var(--color-yellow);
+}
+
+.fm-severity-count-low {
+  background: color-mix(in srgb, var(--background-modifier-border) 50%, transparent);
+  color: var(--text-muted);
+}
+
+.fm-severity-count-clear {
+  background: color-mix(in srgb, var(--color-green) 20%, transparent);
+  color: var(--color-green);
+}
+
+/* Passage as highlight trigger */
+.fm-passage-link {
+  cursor: pointer;
+  position: relative;
+}
+
+.fm-passage-link:hover {
+  background: color-mix(in srgb, var(--interactive-accent) 10%, transparent);
+}
+
+.fm-locate-icon {
+  display: none;
+  font-size: 11px;
+  margin-right: 4px;
+  font-style: normal;
+}
+
+.fm-passage-link:hover .fm-locate-icon {
+  display: inline;
+}
+
+/* Empty state messages */
+.fm-empty-state {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-style: italic;
+  padding: 8px 0;
+}
+
+/* Phase label */
+.fm-phase-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+/* Toolbar */
+.fm-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* Inline confirmation */
+.fm-inline-confirm {
+  font-size: 13px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fm-btn-confirm-yes {
+  background: none;
+  border: none;
+  color: var(--color-red);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.fm-btn-confirm-yes:hover {
+  background: color-mix(in srgb, var(--color-red) 10%, transparent);
+}
+
+.fm-btn-confirm-cancel {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.fm-btn-confirm-cancel:hover {
+  background: var(--background-modifier-hover);
+}
+
+/* Cancel button during analysis */
+.fm-btn-cancel {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 13px;
+  text-decoration: underline;
+}
+
+.fm-btn-cancel:hover {
+  color: var(--text-normal);
+}
+
+/* Stale note banner */
+.fm-stale-banner {
+  background: color-mix(in srgb, var(--color-yellow) 15%, transparent);
+  border: 1px solid var(--color-yellow);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.fm-btn-reanalyze {
+  background: none;
+  border: none;
+  color: var(--interactive-accent);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: underline;
+}
+
+.fm-btn-reanalyze:hover {
+  color: var(--interactive-accent-hover);
+}
