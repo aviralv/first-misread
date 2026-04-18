@@ -49,7 +49,9 @@ export async function runPipeline(client, text, onProgress, personas) {
   const personaResults = await simulateAll(client, allPersonas, text, metadata, emit);
   const aggregatedFindings = aggregateFindings(personaResults);
 
+  emit({ type: 'strengths-started' });
   const strengthsResult = await identifyStrengths(client, text, metadata, personaResults);
+  emit({ type: 'strengths-done' });
   const strengths = strengthsResult ? strengthsResult.strengths : null;
   const takeaways = strengthsResult ? strengthsResult.takeaways : null;
 

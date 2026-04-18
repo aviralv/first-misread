@@ -105,5 +105,10 @@ export function createVaultHistory(adapter, basePath) {
       try { await adapter.remove(indexPath(contentId)); } catch {}
       try { await adapter.rmdir(`${basePath}/${contentId}`); } catch {}
     },
+
+    async getRunCount(contentId) {
+      const index = await loadIndex(contentId);
+      return index.runs.length;
+    },
   };
 }
