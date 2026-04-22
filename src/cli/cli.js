@@ -16,18 +16,19 @@ const __dirname = dirname(__filename);
 const PROJECT_ROOT = resolve(__dirname, '../..');
 const PERSONAS_DIR = join(PROJECT_ROOT, 'personas');
 const OUTPUT_DIR = join(PROJECT_ROOT, 'output');
+const PKG = JSON.parse(readFileSync(join(PROJECT_ROOT, 'package.json'), 'utf8'));
 
 const PROVIDER_DEFAULTS = {
-  anthropic: { model: 'claude-sonnet-4-6', envKey: 'ANTHROPIC_API_KEY' },
-  openai: { model: 'gpt-4o', envKey: 'OPENAI_API_KEY' },
-  google: { model: 'gemini-2.5-flash', envKey: 'GEMINI_API_KEY' },
-  'openai-compatible': { model: '', envKey: '' },
+  anthropic: { model: 'claude-sonnet-4-6', envKey: 'ANTHROPIC_API_KEY', envBaseUrl: 'ANTHROPIC_BASE_URL' },
+  openai: { model: 'gpt-4o', envKey: 'OPENAI_API_KEY', envBaseUrl: 'OPENAI_BASE_URL' },
+  google: { model: 'gemini-2.5-flash', envKey: 'GEMINI_API_KEY', envBaseUrl: 'GEMINI_BASE_URL' },
+  'openai-compatible': { model: '', envKey: '', envBaseUrl: '' },
 };
 
 program
   .name('first-misread')
   .description('Behavioral reading simulation for written content')
-  .version('1.0.2')
+  .version(PKG.version)
   .argument('[input]', 'Path to a text file to analyze')
   .option('-t, --text <text>', 'Paste text directly instead of a file path')
   .option('-p, --provider <provider>', 'LLM provider: anthropic, openai, google, openai-compatible', 'anthropic')
@@ -81,10 +82,11 @@ program
     }
 
     const model = opts.model || providerDefaults.model;
+    const baseUrl = (opts.baseUrl || process.env[providerDefaults.envBaseUrl] || '').replace(/\/+$/, '') || undefined;
     const client = createClient(opts.provider, {
       apiKey,
       model,
-      baseUrl: opts.baseUrl || undefined,
+      baseUrl,
     });
 
     const personas = loadPersonasFromYaml(PERSONAS_DIR);
