@@ -1,4 +1,5 @@
 import { analyzeContent } from './analyzer.js';
+import { detectFormat } from './format-detector.js';
 import { selectDynamicPersonas } from './selector.js';
 import { simulateAll } from './simulator.js';
 import { aggregateFindings } from './aggregator.js';
@@ -29,13 +30,20 @@ export function validateInput(text) {
   return text;
 }
 
-export async function runPipeline(client, text, onProgress, personas) {
+export async function runPipeline(client, text, onProgress, personas, options = {}) {
   const emit = onProgress || (() => {});
+
+  // Detect format BEFORE stripping frontmatter — frontmatter is a primary signal
+  const rawMetadata = analyzeContent(text);
+  const formatResult = detectFormat(text, rawMetadata, options.format, options.fileContext);
 
   text = validateInput(text);
 
   const metadata = analyzeContent(text);
+  metadata.format = formatResult;
+
   emit({ type: 'metadata', metadata });
+  emit({ type: 'format-detected', format: formatResult.format, confidence: formatResult.confidence, source: formatResult.source });
 
   const { core, dynamic } = personas;
   const selectedDynamic = await selectDynamicPersonas(client, text, metadata, dynamic);

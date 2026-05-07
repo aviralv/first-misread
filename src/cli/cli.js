@@ -31,6 +31,7 @@ program
   .version(PKG.version)
   .argument('[input]', 'Path to a text file to analyze')
   .option('-t, --text <text>', 'Paste text directly instead of a file path')
+  .option('-f, --format <format>', 'Content format: linkedin, essay, email, tweet, short-form (auto-detected if omitted)')
   .option('-p, --provider <provider>', 'LLM provider: anthropic, openai, google, openai-compatible', 'anthropic')
   .option('-k, --api-key <key>', 'API key (overrides env var)')
   .option('-m, --model <model>', 'Model name (overrides provider default)')
@@ -95,8 +96,16 @@ program
 
     console.error(`Analyzing "${title}" with ${opts.provider}/${model}...`);
 
+    const pipelineOptions = {
+      format: opts.format || null,
+      fileContext: filePath ? { filename: basename(filePath) } : null,
+    };
+
     const onProgress = (msg) => {
       switch (msg.type) {
+        case 'format-detected':
+          console.error(`Format: ${msg.format} (${msg.confidence} confidence, ${msg.source})`);
+          break;
         case 'personas-selected':
           console.error(`Selected ${msg.personas.length} personas: ${msg.personas.join(', ')}`);
           break;
@@ -109,7 +118,7 @@ program
       }
     };
 
-    const result = await runPipeline(client, content, onProgress, personas);
+    const result = await runPipeline(client, content, onProgress, personas, pipelineOptions);
 
     const { outputDir, record } = writeOutput(
       OUTPUT_DIR, slug, title,

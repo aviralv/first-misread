@@ -6,7 +6,7 @@ import { RevisionNotes } from "./RevisionNotes";
 import { SummaryBar } from "./SummaryBar";
 import { AnalyzerToolbar } from "./AnalyzerToolbar";
 import { highlightPassage } from "./highlight";
-import { validateInput, runPipeline, stripFrontmatter } from "../../core/pipeline.js";
+import { runPipeline } from "../../core/pipeline.js";
 import { createClient, setHttpFunction } from "../../core/llm-client.js";
 import { getCorePersonas, getDynamicPersonas } from "../../core/personas.js";
 import { createVaultHistory, contentHash } from "../../core/history.js";
@@ -62,8 +62,7 @@ export function Analyzer({ app, settings }: Props) {
       const cached = currentPath ? cacheRef.current.get(currentPath) : null;
       if (cached && currentFile) {
         const raw = await app.vault.read(currentFile);
-        const text = stripFrontmatter(raw);
-        const hash = await contentHash(text);
+        const hash = await contentHash(raw);
         analyzedPathRef.current = currentPath;
         setResult(cached.result);
         setDiffs(cached.diffs);
@@ -125,8 +124,6 @@ export function Analyzer({ app, settings }: Props) {
 
     try {
       const raw = await app.vault.read(file);
-      const text = stripFrontmatter(raw);
-      validateInput(text);
 
       const client = createClient(settings.provider, {
         apiKey: settings.apiKey,
@@ -176,7 +173,9 @@ export function Analyzer({ app, settings }: Props) {
         core: getCorePersonas(),
         dynamic: getDynamicPersonas(),
       };
-      const pipelineResult = await runPipeline(client, text, onProgress, personaConfig);
+      const pipelineResult = await runPipeline(client, raw, onProgress, personaConfig, {
+        fileContext: { filename: file.name },
+      });
 
       if (cancelledRef.current) return;
 
@@ -205,7 +204,7 @@ export function Analyzer({ app, settings }: Props) {
         .replace(/[:.]/g, "")
         .slice(0, 15);
       const runId = `run-${timestamp}`;
-      const hash = await contentHash(text);
+      const hash = await contentHash(raw);
 
       const runRecord = {
         run_id: runId,
