@@ -1,6 +1,7 @@
 import { writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { contentHash } from './history-fs.js';
+import { signalStrength } from '../core/models.js';
 
 const SEVERITY_EMOJI = { high: '\u{1f534}', medium: '\u{1f7e1}', low: '\u26aa' };
 
@@ -19,7 +20,7 @@ export function generateSummary(title, metadata, results, aggregated, totalPerso
   for (let i = 0; i < Math.min(aggregated.length, 5); i++) {
     const f = aggregated[i];
     const emoji = SEVERITY_EMOJI[f.severity] || '';
-    const signal = `flagged by ${f.personas.length} persona${f.personas.length !== 1 ? 's' : ''}`;
+    const signal = signalStrength(f.personas);
     lines.push(`${i + 1}. **${emoji} ${f.descriptions[0].what_happened}** (${signal})`);
     lines.push(`   > "${f.passage}"`);
     lines.push(`   Flagged by: ${f.personas.join(', ')}`);

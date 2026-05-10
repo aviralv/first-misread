@@ -1,6 +1,4 @@
-import { passagesOverlap } from "./aggregator.js";
-
-const SEVERITY_ORDER = { high: 0, medium: 1, low: 2 };
+import { passagesOverlap, SEVERITY_ORDER } from "./aggregator.js";
 
 function findMatch(finding, candidates) {
   for (const candidate of candidates) {

@@ -1,5 +1,5 @@
 const OVERLAP_THRESHOLD = 0.6;
-const SEVERITY_ORDER = { high: 0, medium: 1, low: 2 };
+export const SEVERITY_ORDER = { high: 0, medium: 1, low: 2 };
 
 export function passagesOverlap(a, b) {
   const tokensA = new Set(a.toLowerCase().split(/\s+/));

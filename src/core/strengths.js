@@ -81,12 +81,12 @@ Word count: ${metadata.wordCount} | Paragraphs: ${metadata.paragraphCount}
 ${text}
 </article>`;
 
-  const strengthsResult = await client.call(STRENGTHS_SYSTEM_PROMPT, userPrompt + '\n\nIdentify 2-3 load-bearing passages. Return JSON.');
+  const [strengthsResult, takeawaysResult] = await Promise.all([
+    client.call(STRENGTHS_SYSTEM_PROMPT, userPrompt + '\n\nIdentify 2-3 load-bearing passages. Return JSON.'),
+    client.call(TAKEAWAYS_SYSTEM_PROMPT, userPrompt + '\n\nIdentify 2-3 reader takeaways. Return JSON.'),
+  ]);
 
   const strengths = (strengthsResult && strengthsResult.strengths) ? strengthsResult.strengths : [];
-
-  const takeawaysResult = await client.call(TAKEAWAYS_SYSTEM_PROMPT, userPrompt + '\n\nIdentify 2-3 reader takeaways. Return JSON.');
-
   const takeaways = (takeawaysResult && takeawaysResult.takeaways) ? takeawaysResult.takeaways : [];
 
   return { strengths, takeaways };

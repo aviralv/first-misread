@@ -1,6 +1,6 @@
 {
   "name": "first-misread",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Stress-test your writing with synthetic reader personas. Find the first place your draft gets misunderstood.",
   "type": "module",
   "bin": {

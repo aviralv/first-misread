@@ -199,7 +199,8 @@ export function Analyzer({ app, settings }: Props) {
         setRevisionNotes(notes);
       }
 
-      const timestamp = new Date()
+      const now = new Date();
+      const timestamp = now
         .toISOString()
         .replace(/[:.]/g, "")
         .slice(0, 15);
@@ -208,7 +209,7 @@ export function Analyzer({ app, settings }: Props) {
 
       const runRecord = {
         run_id: runId,
-        timestamp: new Date().toISOString(),
+        timestamp: now.toISOString(),
         slug: contentId.split("/").pop() || contentId,
         content_hash: hash,
         word_count: pipelineResult.metadata.wordCount,
@@ -227,7 +228,7 @@ export function Analyzer({ app, settings }: Props) {
       };
 
       if (pipelineResult.personaResults.length > 0) {
-        await history.saveRun(contentId, runRecord, text);
+        await history.saveRun(contentId, runRecord, raw);
       }
 
       const count = await history.getRunCount(contentId);

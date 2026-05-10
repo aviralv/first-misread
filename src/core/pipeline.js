@@ -33,13 +33,12 @@ export function validateInput(text) {
 export async function runPipeline(client, text, onProgress, personas, options = {}) {
   const emit = onProgress || (() => {});
 
-  // Detect format BEFORE stripping frontmatter — frontmatter is a primary signal
-  const rawMetadata = analyzeContent(text);
-  const formatResult = detectFormat(text, rawMetadata, options.format, options.fileContext);
-
+  const rawText = text;
   text = validateInput(text);
 
   const metadata = analyzeContent(text);
+  // Detect format using raw text (frontmatter is a primary signal) but stripped metadata
+  const formatResult = detectFormat(rawText, metadata, options.format, options.fileContext);
   metadata.format = formatResult;
 
   emit({ type: 'metadata', metadata });

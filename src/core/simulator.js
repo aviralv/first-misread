@@ -83,52 +83,37 @@ const MAX_CONCURRENT = 4;
 
 export async function simulateAll(client, personas, text, metadata, onProgress) {
   const results = [];
-  let running = 0;
-  let resolveSlot = null;
+  const queue = [...personas];
 
-  function waitForSlot() {
-    if (running < MAX_CONCURRENT) return Promise.resolve();
-    return new Promise(r => { resolveSlot = r; });
-  }
-
-  function releaseSlot() {
-    running--;
-    if (resolveSlot) {
-      const r = resolveSlot;
-      resolveSlot = null;
-      r();
+  async function worker() {
+    while (queue.length > 0) {
+      const persona = queue.shift();
+      if (onProgress) onProgress({ type: 'persona-started', persona: persona.name });
+      try {
+        const result = await simulatePersona(client, persona, text, metadata);
+        if (onProgress) {
+          onProgress({
+            type: 'persona-done',
+            persona: persona.name,
+            findingCount: result ? result.findings.length : 0,
+            failed: !result,
+          });
+        }
+        if (result) results.push(result);
+      } catch {
+        if (onProgress) {
+          onProgress({
+            type: 'persona-done',
+            persona: persona.name,
+            findingCount: 0,
+            failed: true,
+          });
+        }
+      }
     }
   }
 
-  const tasks = personas.map(async (persona) => {
-    await waitForSlot();
-    running++;
-    if (onProgress) onProgress({ type: 'persona-started', persona: persona.name });
-    try {
-      const result = await simulatePersona(client, persona, text, metadata);
-      if (onProgress) {
-        onProgress({
-          type: 'persona-done',
-          persona: persona.name,
-          findingCount: result ? result.findings.length : 0,
-          failed: !result,
-        });
-      }
-      if (result) results.push(result);
-    } catch {
-      if (onProgress) {
-        onProgress({
-          type: 'persona-done',
-          persona: persona.name,
-          findingCount: 0,
-          failed: true,
-        });
-      }
-    } finally {
-      releaseSlot();
-    }
-  });
-
-  await Promise.all(tasks);
+  const workers = Array.from({ length: Math.min(MAX_CONCURRENT, personas.length) }, () => worker());
+  await Promise.all(workers);
   return results;
 }
